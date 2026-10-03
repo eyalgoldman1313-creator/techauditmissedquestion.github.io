@@ -35,7 +35,7 @@ const body = MISSED.map(([id, labels, ses, q]) => {
   </div>`).join('')}
 </section>`;
 }).join('\n');
-const css = fs.readFileSync('C:/itaudit/guide/ref_style.css','utf8') + fs.readFileSync('C:/itaudit/guide/extra.css','utf8') + fs.readFileSync('C:/itaudit/guide/mobile.css','utf8');
+const css = fs.readFileSync('C:/itaudit/build/mdtable.css','utf8') + fs.readFileSync('C:/itaudit/guide/ref_style.css','utf8') + fs.readFileSync('C:/itaudit/guide/extra.css','utf8') + fs.readFileSync('C:/itaudit/guide/mobile.css','utf8');
 const GUIDE='https://eyalgoldman1313-creator.github.io/tech_audit_guide.github.io/', PRAC='https://eyalgoldman1313-creator.github.io/tech_audit_practice.github.io/';
 const navDD = MISSED.map(([id,,ses,q])=>`<a href="#${id}"><span class="dd-code">ש׳ ${q}</span>${esc(ses)}</a>`).join('');
 const cards = MISSED.map(([id, labels, ses, q, sec, pct]) => {
@@ -90,6 +90,8 @@ var h=document.getElementById('hamburger'),n=document.getElementById('navLinks')
 document.querySelectorAll('.nav-item>a').forEach(function(a){a.addEventListener('click',function(e){var d=a.nextElementSibling;if(d&&matchMedia('(max-width:1180px)').matches){e.preventDefault();a.parentNode.classList.toggle('open')}})});
 document.querySelectorAll('.dropdown a').forEach(function(a){a.onclick=function(){n.classList.remove('open')}});
 var b=document.getElementById('b2t');b.onclick=function(){scrollTo({top:0,behavior:'smooth'})};addEventListener('scroll',function(){b.classList.toggle('on',scrollY>600)},{passive:true});
-${mjs}</script></body></html>`;
+${mjs}
+${fs.readFileSync('C:/itaudit/build/mdtable.js','utf8')}
+enhanceTables(document);</script></body></html>`;
 fs.writeFileSync(process.argv[2], html);
 console.log('ok', html.length);
