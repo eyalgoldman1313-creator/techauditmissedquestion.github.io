@@ -21,7 +21,7 @@ const MISSED = [
 const TOPIC = { process: 'תהליך הביקורת', controls: 'בקרות / ITGC', caat: 'כלים ממוחשבים', security: 'אבטחת מידע', sdlc: 'פיתוח מערכות', outsourcing: 'לשכות שירות / ענן', systems: 'מערכות מידע', bcp: 'המשכיות עסקית' };
 const md = (s) => marked.parse(s ?? '');
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
-const rows = MISSED.map(([id, , ses, q, sec, pct], i) => `<tr><td>${i + 1}</td><td><a href="#${id}">${esc(ses)}</a></td><td>${q}</td><td>${esc(sec)}</td><td>${esc(pct)}</td><td>${esc(byId[id].parts.filter(p=>MISSED[i][1].includes(p.label)).map(p=>TOPIC[p.topic]??p.topic).filter((v,j,a)=>a.indexOf(v)===j).join(', '))}</td></tr>`).join('');
+const rows = MISSED.map(([id, , ses, q, sec, pct], i) => `<tr><td data-label="#"><b>${i + 1}</b><a class="mo" href="#${id}"> · ${esc(ses)} · שאלה ${q}</a></td><td data-label="מועד"><a href="#${id}">${esc(ses)}</a></td><td data-label="שאלה">${q}</td><td data-label="סעיף">${esc(sec)}</td><td data-label="%">${esc(pct)}</td><td data-label="נושא">${esc(byId[id].parts.filter(p=>MISSED[i][1].includes(p.label)).map(p=>TOPIC[p.topic]??p.topic).filter((v,j,a)=>a.indexOf(v)===j).join(', '))}</td></tr>`).join('');
 const body = MISSED.map(([id, labels, ses, q]) => {
   const c = byId[id];
   const parts = c.parts.filter((p) => labels.includes(p.label));
@@ -35,7 +35,7 @@ const body = MISSED.map(([id, labels, ses, q]) => {
   </div>`).join('')}
 </section>`;
 }).join('\n');
-const css = fs.readFileSync('C:/itaudit/guide/ref_style.css','utf8') + fs.readFileSync('C:/itaudit/guide/extra.css','utf8');
+const css = fs.readFileSync('C:/itaudit/guide/ref_style.css','utf8') + fs.readFileSync('C:/itaudit/guide/extra.css','utf8') + fs.readFileSync('C:/itaudit/guide/mobile.css','utf8');
 const GUIDE='https://eyalgoldman1313-creator.github.io/tech_audit_guide.github.io/', PRAC='https://eyalgoldman1313-creator.github.io/tech_audit_practice.github.io/';
 const navDD = MISSED.map(([id,,ses,q])=>`<a href="#${id}"><span class="dd-code">ש׳ ${q}</span>${esc(ses)}</a>`).join('');
 const cards = MISSED.map(([id, labels, ses, q, sec, pct]) => {
@@ -46,12 +46,13 @@ const cards = MISSED.map(([id, labels, ses, q, sec, pct]) => {
   <details class="bg"><summary>📄 נתוני השאלה (לחצו לפתיחה)</summary><div class="summary">${md(c.background)}</div></details>
   ${parts.map((p,i)=>`<div class="section-label">${esc(p.label)}${p.points?` · ${p.points}%`:''} · ${TOPIC[p.topic]??p.topic}</div>
   <div class="req"><h4>הנדרש</h4>${md(p.question)}</div>
-  <textarea class="ans" placeholder="נסו לענות לבד לפני שאתם חושפים את הפתרון…"></textarea>
   <button class="reveal" onclick="this.nextElementSibling.hidden=false;this.remove()">הצגת הפתרון הרשמי</button>
   <div class="sol" hidden><h4>✓ פתרון רשמי</h4>${md(p.solution)}${p.keyPoints?.length?`<div class="kp"><b>נקודות מפתח לבדיקה עצמית:</b><ul>${p.keyPoints.map(k=>`<li>${esc(k)}</li>`).join('')}</ul></div>`:''}</div>`).join('')}
   <div class="art-foot"><div class="art-actions"><a class="practice-link" href="${PRAC}#/case/${id}" target="_blank" rel="noopener">🗂️ לסימולציה באתר התרגול</a></div></div>
 </article>`;}).join('\n');
-const html = `<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+const mjs = fs.readFileSync('C:/itaudit/guide/mobile.js','utf8');
+const sheet = `<details data-ch="qs" open><summary><span class="n" style="background:#D97706">10</span>השאלות<span class="chev">⌄</span></summary><div class="arts">${MISSED.map(([id,,ses,q])=>`<a href="#${id}">${esc(ses)} · שאלה ${q} — ${esc(byId[id].title)}</a>`).join('')}</div></details>`;
+const html = `<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>שאלות שהמיפוי פספס — ביקורת מערכות מידע</title>
 <meta name="description" content="סעיפי מערכות מידע בבחינות המועצה 2015–2025 שאינם במיפוי המרצה — עם הנדרש והפתרון הרשמי.">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700;800;900&family=Assistant:wght@400;600;700&display=swap" rel="stylesheet">
@@ -64,6 +65,8 @@ details.bg{background:#FAFBFE;border:1px solid var(--hairline);border-radius:16p
 .sol{background:#E6F7F0;border-inline-start:5px solid #0E9F6E;border-radius:16px;padding:8px 20px;margin-top:12px}.sol h4{color:#0E9F6E}
 .kp{margin-top:12px;padding-top:10px;border-top:1px dashed rgba(0,0,0,.15)}
 .sumtbl a{color:#6366F1}
+.mo{display:none}
+@media (max-width:760px){details.bg{padding:2px 12px}.req,.sol{padding:6px 14px}.reveal{width:100%;padding:13px}.sumtbl td[data-label="מועד"],.sumtbl td[data-label="שאלה"]{display:none}.mo{display:inline}}
 </style></head><body><div class="mesh" aria-hidden="true"></div>
 <div class="nav-wrap"><nav class="pill" aria-label="ניווט ראשי"><a class="brand" href="#top"><span class="dot"></span>שאלות שהמיפוי פספס</a>
 <button class="hamburger" id="hamburger" aria-label="פתיחת תפריט" aria-expanded="false">☰</button>
@@ -79,11 +82,14 @@ details.bg{background:#FAFBFE;border:1px solid var(--hairline);border-radius:16p
 <section class="chapter container" id="qs">${cards}</section>
 <footer class="foot"><span class="mark">ביקורת מערכות מידע ממוחשבות בשילוב AI</span>מקור: בחינות מועצת רואי החשבון 2015–2025 והפתרונות הרשמיים.<br><a href="${GUIDE}">מדריך</a> · <a href="${PRAC}">תרגול</a></footer>
 <button class="b2t" id="b2t" aria-label="חזרה למעלה">↑</button>
+<div class="progress" aria-hidden="true"><i></i></div>
+<nav class="mbar" aria-label="ניווט מהיר"><button data-sheet><span class="ic">📋</span>שאלות</button><button data-top><span class="ic">↑</span>סיכום</button><a href="${GUIDE}" target="_blank"><span class="ic">📘</span>מדריך</a><a href="${PRAC}" target="_blank"><span class="ic">📝</span>תרגול</a></nav>
+<div class="mscrim"></div><div class="msheet" role="dialog" aria-label="רשימת השאלות"><div class="grab"></div><h4>קפיצה לשאלה</h4>${sheet}</div>
 <script>
 var h=document.getElementById('hamburger'),n=document.getElementById('navLinks');h.onclick=function(){n.classList.toggle('open')};
 document.querySelectorAll('.nav-item>a').forEach(function(a){a.addEventListener('click',function(e){var d=a.nextElementSibling;if(d&&matchMedia('(max-width:1180px)').matches){e.preventDefault();a.parentNode.classList.toggle('open')}})});
 document.querySelectorAll('.dropdown a').forEach(function(a){a.onclick=function(){n.classList.remove('open')}});
 var b=document.getElementById('b2t');b.onclick=function(){scrollTo({top:0,behavior:'smooth'})};addEventListener('scroll',function(){b.classList.toggle('on',scrollY>600)},{passive:true});
-</script></body></html>`;
+${mjs}</script></body></html>`;
 fs.writeFileSync(process.argv[2], html);
 console.log('ok', html.length);
