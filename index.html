@@ -1,0 +1,1119 @@
+<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>שאלות שהמיפוי פספס — ביקורת מערכות מידע</title>
+<meta name="description" content="סעיפי מערכות מידע בבחינות המועצה 2015–2025 שאינם במיפוי המרצה — עם הנדרש והפתרון הרשמי.">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700;800;900&family=Assistant:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===================== Design Tokens ===================== */
+:root{
+  --bg:#F6F7FC;
+  --surface:#FFFFFF;
+  --ink:#171E33;
+  --ink-soft:#3D4560;
+  --muted:#6B7390;
+  --hairline:rgba(23,30,51,.08);
+  --shell:rgba(23,30,51,.045);
+
+  --indigo:#6366F1; --indigo-soft:#EEF0FE;
+  --blue:#2E7CF6;   --blue-soft:#EAF2FE;
+  --amber:#D97706;  --amber-soft:#FDF3E3;
+  --emerald:#0E9F6E;--emerald-soft:#E6F7F0;
+  --rose:#E11D48;   --rose-soft:#FDEAEF;
+  --violet:#7C3AED; --violet-soft:#F3EDFD;
+  --cyan:#0891B2;   --cyan-soft:#E4F6FA;
+
+  --accent:#6366F1;
+  --accent-soft:#EEF0FE;
+
+  --r-outer:1.75rem;
+  --r-inner:calc(1.75rem - .5rem);
+  --ease:cubic-bezier(.32,.72,0,1);
+  --shadow-soft:0 2px 6px rgba(23,30,51,.04), 0 18px 44px -18px rgba(23,30,51,.14);
+  --shadow-hover:0 4px 10px rgba(23,30,51,.05), 0 30px 60px -22px rgba(23,30,51,.22);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+body{
+  font-family:'Assistant','Heebo','Noto Sans Hebrew',sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  font-size:18.5px;
+  line-height:1.8;
+  letter-spacing:normal;
+  word-spacing:.03em;
+  text-align:start;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4,h5{font-family:'Heebo','Assistant',sans-serif;line-height:1.35;text-wrap:balance}
+::selection{background:rgba(99,102,241,.18)}
+[dir="ltr"]{unicode-bidi:isolate}
+
+/* mesh gradient backdrop */
+.mesh{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.mesh::before,.mesh::after{content:"";position:absolute;border-radius:50%;filter:blur(90px);opacity:.5}
+.mesh::before{width:60vw;height:60vw;inset-block-start:-22vw;inset-inline-start:-14vw;
+  background:radial-gradient(circle at 50% 50%, rgba(124,58,237,.14), rgba(46,124,246,.10) 55%, transparent 75%)}
+.mesh::after{width:52vw;height:52vw;inset-block-start:38vh;inset-inline-end:-18vw;
+  background:radial-gradient(circle at 50% 50%, rgba(14,159,110,.11), rgba(8,145,178,.08) 55%, transparent 75%)}
+
+/* ===================== Navbar (pill) ===================== */
+.nav-wrap{position:fixed;inset-block-start:0;inset-inline:0;z-index:100;display:flex;justify-content:center;padding:14px 16px 0;pointer-events:none}
+nav.pill{
+  pointer-events:auto;
+  display:flex;align-items:center;gap:2px;
+  background:rgba(255,255,255,.72);
+  backdrop-filter:blur(18px) saturate(1.4);
+  -webkit-backdrop-filter:blur(18px) saturate(1.4);
+  border:1px solid rgba(255,255,255,.85);
+  box-shadow:0 1px 0 rgba(255,255,255,.9) inset, 0 12px 34px -12px rgba(23,30,51,.22);
+  border-radius:999px;
+  padding:6px 10px;
+  max-width:min(1160px,100%);
+}
+.brand{display:flex;align-items:center;gap:8px;font-family:'Heebo';font-weight:800;font-size:.92rem;padding:6px 10px;white-space:nowrap;color:var(--ink)}
+.brand .dot{width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,var(--indigo),var(--cyan));box-shadow:0 0 0 4px rgba(99,102,241,.14)}
+.nav-links{display:flex;align-items:center;gap:1px}
+.nav-item{position:relative}
+.nav-item>a{
+  display:block;padding:8px 13px;border-radius:999px;
+  color:var(--ink-soft);text-decoration:none;font-weight:600;font-size:.86rem;white-space:nowrap;
+  transition:color .35s var(--ease), background .35s var(--ease);
+}
+.nav-item>a:hover{color:var(--ink);background:rgba(23,30,51,.05)}
+.nav-item>a.active{color:#fff;background:var(--ink)}
+.dropdown{
+  position:absolute;inset-block-start:calc(100% + 10px);inset-inline-start:50%;transform:translateX(50%) translateY(8px);
+  min-width:250px;
+  background:rgba(255,255,255,.94);backdrop-filter:blur(22px) saturate(1.5);-webkit-backdrop-filter:blur(22px) saturate(1.5);
+  border:1px solid rgba(255,255,255,.9);border-radius:20px;
+  box-shadow:0 24px 60px -18px rgba(23,30,51,.3);
+  padding:8px;
+  opacity:0;visibility:hidden;
+  transition:opacity .4s var(--ease), transform .4s var(--ease), visibility .4s;
+}
+.nav-item:hover .dropdown,.nav-item:focus-within .dropdown{opacity:1;visibility:visible;transform:translateX(50%) translateY(0)}
+.dropdown a{
+  display:flex;align-items:baseline;gap:8px;padding:9px 12px;border-radius:12px;text-decoration:none;
+  color:var(--ink-soft);font-size:.86rem;font-weight:500;
+  transition:background .3s var(--ease), color .3s var(--ease), padding-inline-start .3s var(--ease);
+}
+.dropdown a:hover{background:rgba(99,102,241,.08);color:var(--ink);padding-inline-start:18px}
+.dropdown a .dd-code{font-family:'Heebo';font-weight:800;font-size:.72rem;color:var(--accent,#6366F1);min-width:2.4em}
+.dropdown .dd-head{font-size:.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:8px 12px 4px}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:8px 12px;border-radius:999px;font-size:1.15rem;color:var(--ink);font-family:'Heebo'}
+@media(max-width:1180px){
+  .nav-links{
+    display:none;position:absolute;inset-block-start:calc(100% + 10px);inset-inline-end:0;
+    flex-direction:column;align-items:stretch;gap:2px;min-width:270px;max-height:74vh;overflow:auto;
+    background:rgba(255,255,255,.96);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+    border:1px solid rgba(255,255,255,.9);border-radius:20px;padding:10px;
+    box-shadow:0 30px 70px -20px rgba(23,30,51,.35);
+  }
+  .nav-links.open{display:flex}
+  .hamburger{display:block}
+  .nav-item>a{padding:10px 14px}
+  .dropdown{position:static;transform:none;opacity:1;visibility:visible;box-shadow:none;border:none;background:transparent;padding:0 10px 6px;display:none}
+  .nav-item.open .dropdown{display:block}
+}
+
+/* ===================== Layout primitives ===================== */
+.container{max-width:1180px;margin-inline:auto;padding-inline:clamp(18px,4vw,34px)}
+section.chapter{padding-block:clamp(56px,8vh,110px);scroll-margin-block-start:96px}
+.anchor-target{scroll-margin-block-start:110px}
+
+.eyebrow{
+  display:inline-flex;align-items:center;gap:7px;
+  border-radius:999px;padding:5px 14px;
+  font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  font-family:'Heebo';
+  background:var(--surface);border:1px solid var(--hairline);color:var(--muted);
+  box-shadow:0 1px 2px rgba(23,30,51,.05);
+}
+.eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent,#6366F1)}
+.ch-head{max-width:860px;margin-inline:auto;margin-block-end:clamp(30px,5vh,52px);text-align:center}
+.ch-head h2{font-size:clamp(1.85rem,3.6vw,2.7rem);font-weight:800;margin-block:14px 14px;line-height:1.3;padding-block-end:4px}
+.ch-head p.lead{color:var(--muted);font-size:1.1rem;line-height:1.75;max-width:64ch;margin-inline:auto}
+
+/* ===================== HERO ===================== */
+header.hero{
+  padding-block:clamp(120px,18vh,180px) clamp(40px,7vh,80px);
+  text-align:center;
+}
+.hero .eyebrow{margin-block-end:20px}
+.hero h1{
+  font-size:clamp(2.3rem,5.5vw,4rem);font-weight:900;line-height:1.3;
+  background:linear-gradient(120deg,#171E33 20%,#4E3EC8 55%,#0891B2 90%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  margin-block-end:18px;
+  padding-block-end:6px;
+}
+.hero p.sub{max-width:64ch;margin-inline:auto;color:var(--muted);font-size:clamp(1rem,1.6vw,1.15rem)}
+.hero .meta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-block-start:26px}
+.hero .meta span{
+  font-size:.82rem;font-weight:600;font-family:'Heebo';color:var(--ink-soft);
+  background:var(--surface);border:1px solid var(--hairline);border-radius:999px;padding:6px 15px;
+  box-shadow:0 1px 2px rgba(23,30,51,.05);
+}
+
+/* bento */
+.bento{display:grid;gap:16px;grid-template-columns:repeat(6,1fr);margin-block-start:clamp(36px,6vh,60px)}
+.bento .b-item{grid-column:span 2}
+.bento .b-wide{grid-column:span 3}
+.bento .b-full{grid-column:span 6}
+@media(max-width:900px){.bento{grid-template-columns:1fr 1fr}.bento .b-item,.bento .b-wide,.bento .b-full{grid-column:span 1}}
+@media(max-width:560px){.bento{grid-template-columns:1fr}}
+.b-card{
+  text-align:start;background:var(--surface);border:1px solid var(--hairline);
+  border-radius:20px;padding:24px 26px;height:100%;box-shadow:var(--shadow-soft);
+  transition:transform .55s var(--ease), box-shadow .55s var(--ease);
+  text-decoration:none;color:inherit;display:block;
+}
+.b-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-hover)}
+.b-card .b-code{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:70px;height:36px;padding:0 16px;border-radius:12px;
+  font-family:'Heebo';font-weight:800;font-size:.92rem;letter-spacing:.03em;
+  background:var(--accent-soft,#EEF0FE);color:var(--accent,#6366F1);
+  margin-block-end:14px;
+}
+.b-card h3{font-size:1.15rem;font-weight:800;margin-block-end:6px;color:var(--ink);line-height:1.35}
+.b-card p{font-size:.98rem;color:var(--muted);line-height:1.6}
+
+/* ===================== STANDARD ARTICLE (single unified card) ===================== */
+.standard{
+  --local-accent:var(--accent,#6366F1);
+  --local-accent-soft:var(--accent-soft,#EEF0FE);
+  position:relative;
+  background:var(--surface);
+  border:1px solid var(--hairline);
+  border-radius:24px;
+  padding:clamp(24px,3.4vw,40px);
+  margin-block:28px;
+  scroll-margin-block-start:110px;
+  box-shadow:var(--shadow-soft);
+  transition:transform .6s var(--ease), box-shadow .6s var(--ease);
+}
+.standard:hover{transform:translateY(-3px);box-shadow:var(--shadow-hover)}
+
+/* header row */
+.standard-header{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding-block-end:clamp(14px,1.8vw,20px);
+  margin-block-end:clamp(14px,1.8vw,20px);
+  border-block-end:1px solid var(--hairline);
+}
+.standard-code{
+  display:inline-flex;align-items:center;gap:7px;
+  font-family:'Heebo';font-weight:800;font-size:1rem;letter-spacing:.02em;
+  padding:10px 18px;border-radius:12px;
+  background:var(--local-accent-soft);color:var(--local-accent);
+  border:1px solid color-mix(in srgb, var(--local-accent) 26%, transparent);
+  white-space:nowrap;flex:none;
+  box-shadow:0 2px 8px -3px color-mix(in srgb, var(--local-accent) 40%, transparent);
+}
+.standard h3{
+  font-size:clamp(1.35rem,2.4vw,1.6rem);font-weight:800;color:var(--ink);
+  flex:1;min-width:0;line-height:1.35;
+}
+
+/* purpose callout */
+.purpose{
+  border-inline-start:5px solid var(--local-accent);
+  background:color-mix(in srgb, var(--local-accent) 6%, #fff);
+  border-radius:16px;padding:18px 22px;margin-block:16px;font-size:1.08rem;
+  color:var(--ink-soft);
+  line-height:1.8;
+}
+.purpose strong{
+  color:var(--local-accent);
+  font-family:'Heebo';font-weight:800;
+  display:inline-block;margin-inline-end:4px;
+  font-size:1.05em;
+}
+
+/* summary paragraph — full width, spaced between paragraphs */
+.summary{
+  font-size:1.1rem;line-height:1.9;color:var(--ink-soft);
+  margin-block:10px;
+}
+.summary + .summary{margin-block-start:14px}
+
+/* section labels (big and mini) */
+.section-label{
+  display:inline-flex;align-items:center;gap:12px;
+  font-family:'Heebo';font-weight:800;font-size:1.15rem;
+  letter-spacing:.02em;
+  color:var(--local-accent);
+  margin-block:26px 14px;
+}
+.section-label::before{
+  content:"";width:32px;height:4px;border-radius:2px;
+  background:var(--local-accent);
+}
+/* mini variant inside col-block */
+.col-block .section-label{
+  font-size:1.05rem;margin-block:0 14px;
+}
+.col-block .section-label::before{width:22px;height:3px}
+
+/* two-col grid */
+.two-col{
+  display:grid;gap:clamp(14px,2.2vw,22px);
+  grid-template-columns:1fr 1fr;
+  margin-block:14px 6px;
+}
+@media(max-width:820px){.two-col{grid-template-columns:1fr}}
+.col-block{
+  background:color-mix(in srgb, var(--local-accent) 3.5%, #fff);
+  border:1px solid var(--hairline);
+  border-radius:16px;
+  padding:22px 24px 20px;
+}
+
+/* dot list */
+ul.tight{
+  list-style:none;margin:0;padding:0;
+}
+ul.tight li{
+  position:relative;padding-inline-start:22px;padding-block:7px;
+  font-size:1.02rem;line-height:1.7;color:var(--ink-soft);
+}
+ul.tight li::before{
+  content:"";position:absolute;inset-inline-start:2px;inset-block-start:.9em;
+  width:8px;height:8px;border-radius:50%;
+  background:var(--local-accent);opacity:.7;
+}
+
+/* citations — soft, warm, light card (tinted by chapter accent) */
+blockquote.citation{
+  position:relative;
+  background:color-mix(in srgb, var(--local-accent) 7%, #FFFDF6);
+  color:var(--ink);
+  border-radius:16px;
+  padding:22px 26px 18px;
+  margin-block:16px;
+  box-shadow:0 6px 22px -14px color-mix(in srgb, var(--local-accent) 45%, transparent);
+  font-family:'Assistant';font-weight:400;
+  font-size:1.08rem;line-height:1.9;
+  border-block:1px solid color-mix(in srgb, var(--local-accent) 22%, transparent);
+  border-inline-end:1px solid color-mix(in srgb, var(--local-accent) 22%, transparent);
+  border-inline-start:5px solid var(--local-accent);
+}
+blockquote.citation p{
+  margin:0;
+  color:var(--ink);
+  quotes:"״" "״" "'" "'";
+}
+blockquote.citation p::before{
+  content:open-quote;color:var(--local-accent);font-weight:900;font-family:'Heebo';
+  padding-inline-end:3px;font-size:1.15em;
+}
+blockquote.citation p::after{
+  content:close-quote;color:var(--local-accent);font-weight:900;font-family:'Heebo';
+  padding-inline-start:3px;font-size:1.15em;
+}
+blockquote.citation cite{
+  display:inline-flex;align-items:center;gap:8px;
+  margin-block-start:14px;
+  padding:5px 14px;
+  border-radius:999px;
+  background:color-mix(in srgb, var(--local-accent) 14%, #fff);
+  border:1px solid color-mix(in srgb, var(--local-accent) 28%, transparent);
+  font-style:normal;font-family:'Heebo';font-weight:700;
+  font-size:.92rem;color:var(--local-accent);letter-spacing:.01em;
+}
+blockquote.citation cite::before{
+  content:"";
+  width:6px;height:6px;border-radius:50%;
+  background:var(--local-accent);
+  display:inline-block;flex:none;
+}
+
+/* notes block */
+.notes-block{
+  background:color-mix(in srgb, var(--local-accent) 7%, #fff);
+  border:1px solid color-mix(in srgb, var(--local-accent) 22%, transparent);
+  border-radius:16px;padding:20px 24px;
+  font-size:1.05rem;line-height:1.85;color:var(--ink-soft);
+  margin-block:20px 0;
+}
+.notes-block strong{
+  font-family:'Heebo';font-weight:800;color:var(--local-accent);
+  display:block;margin-block-end:6px;
+  font-size:1.02rem;letter-spacing:.01em;
+}
+.notes-block em{color:var(--ink);font-style:italic;font-weight:600}
+.notes-block table{
+  width:100%;border-collapse:collapse;margin-block-start:12px;
+  background:#fff;border-radius:12px;overflow:hidden;
+  border:1px solid var(--hairline);
+}
+.notes-block table th,
+.notes-block table td{
+  padding:10px 14px !important;text-align:start !important;
+  border:1px solid var(--hairline) !important;
+  font-size:.98rem;vertical-align:top;
+}
+.notes-block table th{
+  background:color-mix(in srgb, var(--local-accent) 10%, #fff) !important;
+  font-family:'Heebo';font-weight:700;color:var(--local-accent);
+  font-size:.92rem;letter-spacing:.02em;
+}
+
+/* ===================== REVEAL ON SCROLL ===================== */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .9s var(--ease), transform .9s var(--ease)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}}
+
+/* footer */
+footer.foot{padding:34px 0 46px;text-align:center;color:var(--muted);font-size:.85rem;line-height:1.75}
+footer.foot .mark{font-family:'Heebo';font-weight:800;color:var(--ink);display:block;margin-block-end:4px;font-size:1rem}
+footer.foot em{color:var(--ink-soft);font-style:italic}
+
+/* back-to-top */
+.b2t{
+  position:fixed;inset-block-end:20px;inset-inline-end:20px;z-index:90;
+  width:44px;height:44px;border-radius:50%;border:1px solid var(--hairline);
+  background:rgba(255,255,255,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  color:var(--ink);cursor:pointer;font-family:'Heebo';font-weight:800;font-size:1.1rem;
+  box-shadow:0 10px 24px -8px rgba(23,30,51,.2);
+  opacity:0;transform:translateY(8px);pointer-events:none;
+  transition:opacity .4s var(--ease), transform .4s var(--ease), background .3s var(--ease);
+}
+.b2t.on{opacity:1;transform:none;pointer-events:auto}
+.b2t:hover{background:#fff}
+
+@media print{
+  .nav-wrap,.mesh,.b2t{display:none}
+  .rv{opacity:1!important;transform:none!important}
+  .standard{page-break-inside:avoid;box-shadow:none}
+  header.hero{padding-block:20px}
+}
+/* ===== additions for the IT-audit guide ===== */
+a.brand{text-decoration:none}
+.nav-item>a.ext{color:var(--indigo)}
+.one-col{display:grid;margin-block:14px 6px}
+.summary p{margin:0}
+.summary p + p{margin-block-start:10px}
+.summary ul,.summary ol{padding-inline-start:1.3em;margin-block:6px}
+ol.numbered{margin:0 0 6px;padding-inline-start:0;list-style:none;counter-reset:n}
+ol.numbered li{counter-increment:n;position:relative;padding-inline-start:40px;padding-block:7px;font-size:1.02rem;line-height:1.7;color:var(--ink-soft)}
+ol.numbered li::before{content:counter(n);position:absolute;inset-inline-start:0;inset-block-start:7px;width:28px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Heebo';font-weight:800;font-size:.85rem;background:var(--local-accent-soft);color:var(--local-accent)}
+.standard{--local-accent:var(--accent);--local-accent-soft:var(--accent-soft)}
+.tbl-wrap{overflow-x:auto;border-radius:14px;border:1px solid var(--hairline);margin-block:6px 10px}
+table.gtable{width:100%;border-collapse:collapse;background:#fff;font-size:.98rem}
+table.gtable th{background:color-mix(in srgb,var(--local-accent) 10%,#fff);font-family:'Heebo';font-weight:700;color:var(--local-accent);text-align:start;padding:11px 14px;border-block-end:1px solid var(--hairline);font-size:.93rem}
+table.gtable td{padding:10px 14px;border-block-end:1px solid var(--hairline);vertical-align:top;line-height:1.65;color:var(--ink-soft)}
+table.gtable td b{color:var(--ink)}
+table.gtable tr:last-child td{border-block-end:none}
+table.gtable tr:nth-child(even) td{background:color-mix(in srgb,var(--local-accent) 2.5%,#fff)}
+.notes-block p{margin:0}
+.notes-block p+p{margin-block-start:8px}
+.art-foot{margin-block-start:22px;padding-block-start:16px;border-block-start:1px dashed var(--hairline);display:grid;gap:10px}
+.exam-refs{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.exam-refs .ef-label{font-family:'Heebo';font-weight:800;font-size:.88rem;color:var(--ink)}
+.exam-refs a,.exam-refs span:not(.ef-label){font-size:.84rem;font-weight:600;padding:4px 12px;border-radius:999px;background:var(--local-accent-soft);color:var(--local-accent);text-decoration:none;border:1px solid color-mix(in srgb,var(--local-accent) 22%,transparent)}
+.exam-refs a:hover{background:color-mix(in srgb,var(--local-accent) 16%,#fff)}
+.art-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.practice-link{font-family:'Heebo';font-weight:700;font-size:.9rem;color:#fff;background:var(--ink);padding:8px 18px;border-radius:999px;text-decoration:none;box-shadow:0 10px 22px -12px rgba(23,30,51,.5)}
+.practice-link:hover{transform:translateY(-1px)}
+.srcs{font-size:.84rem;color:var(--muted)}
+.toc{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-block-start:20px}
+.toc a{font-size:.86rem;font-weight:600;color:var(--ink-soft);background:var(--surface);border:1px solid var(--hairline);border-radius:999px;padding:5px 14px;text-decoration:none;transition:background .3s var(--ease),color .3s var(--ease)}
+.toc a:hover{background:var(--accent-soft);color:var(--accent)}
+.search-box{position:relative;max-width:620px;margin:30px auto 0;text-align:start}
+.search-box input{width:100%;font:inherit;font-size:1.02rem;padding:14px 22px;border-radius:999px;border:1px solid var(--hairline);background:rgba(255,255,255,.9);box-shadow:var(--shadow-soft);color:var(--ink)}
+.search-box input:focus{outline:none;border-color:var(--indigo);box-shadow:0 0 0 4px rgba(99,102,241,.14)}
+.results{position:absolute;inset-inline:0;inset-block-start:calc(100% + 8px);z-index:50;background:#fff;border:1px solid var(--hairline);border-radius:18px;box-shadow:0 30px 60px -20px rgba(23,30,51,.3);padding:6px;max-height:60vh;overflow:auto}
+.results a{display:block;padding:9px 14px;border-radius:12px;text-decoration:none;color:var(--ink)}
+.results a:hover,.results a.sel{background:var(--indigo-soft)}
+.results a small{display:block;color:var(--muted);font-size:.8rem}
+.results .none{padding:12px 14px;color:var(--muted)}
+.callout-x{border-radius:14px;padding:12px 16px;background:var(--amber-soft);border-inline-start:4px solid var(--amber);font-size:.98rem;margin-block:12px}
+@media (max-width:600px){body{font-size:17px}.standard{padding:20px 16px}.col-block{padding:16px}table.gtable{font-size:.9rem}table.gtable td,table.gtable th{padding:8px 10px}}
+/* large page: let the browser skip rendering off-screen articles */
+article.standard{content-visibility:auto;contain-intrinsic-size:auto 1400px}
+
+.standard{--accent:#D97706;--accent-soft:#FDF3E3}
+details.bg{background:#FAFBFE;border:1px solid var(--hairline);border-radius:16px;padding:4px 18px;margin:14px 0}details.bg summary{cursor:pointer;font-family:Heebo;font-weight:700;padding:10px 0}
+.req{background:#EEF0FE;border-inline-start:5px solid #6366F1;border-radius:16px;padding:8px 20px;font-weight:600}.req h4,.sol h4{font-family:Heebo;margin:8px 0 0}.req h4{color:#6366F1}
+.ans{width:100%;min-height:120px;margin-top:12px;border:1.5px solid var(--hairline);border-radius:14px;padding:12px 16px;font:inherit;resize:vertical}
+.reveal{margin-top:10px;font-family:Heebo;font-weight:700;background:#171E33;color:#fff;border:0;border-radius:999px;padding:10px 22px;cursor:pointer}
+.sol{background:#E6F7F0;border-inline-start:5px solid #0E9F6E;border-radius:16px;padding:8px 20px;margin-top:12px}.sol h4{color:#0E9F6E}
+.kp{margin-top:12px;padding-top:10px;border-top:1px dashed rgba(0,0,0,.15)}
+.sumtbl a{color:#6366F1}
+</style></head><body><div class="mesh" aria-hidden="true"></div>
+<div class="nav-wrap"><nav class="pill" aria-label="ניווט ראשי"><a class="brand" href="#top"><span class="dot"></span>שאלות שהמיפוי פספס</a>
+<button class="hamburger" id="hamburger" aria-label="פתיחת תפריט" aria-expanded="false">☰</button>
+<div class="nav-links" id="navLinks"><div class="nav-item"><a href="#top">טבלת סיכום</a></div>
+<div class="nav-item"><a href="#qs">השאלות</a><div class="dropdown"><div class="dd-head">10 שאלות</div><a href="#council-2017-summer-q3"><span class="dd-code">ש׳ 3</span>אביב 2017</a><a href="#council-2018-summer-q4"><span class="dd-code">ש׳ 4</span>אביב 2018</a><a href="#council-2024-special-q5"><span class="dd-code">ש׳ 5</span>מועד מיוחד 2024 (יוני)</a><a href="#council-2025-summer-q5"><span class="dd-code">ש׳ 5</span>אביב 2025</a><a href="#council-2018-winter-q1"><span class="dd-code">ש׳ 1</span>חורף 2018</a><a href="#council-2018-winter-q2"><span class="dd-code">ש׳ 2</span>חורף 2018</a><a href="#council-2019-winter-q5"><span class="dd-code">ש׳ 5</span>חורף 2019</a><a href="#council-2019-winter-q7"><span class="dd-code">ש׳ 7</span>חורף 2019</a><a href="#council-2021-winter-q7"><span class="dd-code">ש׳ 7</span>חורף 2021</a><a href="#council-2025-winter-q4"><span class="dd-code">ש׳ 4</span>חורף 2025</a></div></div>
+<div class="nav-item"><a class="ext" href="https://eyalgoldman1313-creator.github.io/tech_audit_guide.github.io/" target="_blank">📘 מדריך ↗</a></div><div class="nav-item"><a class="ext" href="https://eyalgoldman1313-creator.github.io/tech_audit_practice.github.io/" target="_blank">📝 תרגול ↗</a></div></div></nav></div>
+<header class="hero container" id="top"><span class="eyebrow">בחינות מועצה 2015–2025 · השלמה למיפוי</span>
+<h1>שאלות שהמיפוי פספס</h1>
+<p class="sub">סעיפים בבחינות המועצה שעוסקים בביקורת מערכות מידע ואינם מופיעים ב״מיפוי שאלות מועצה לפי נושאים״ של המרצה. לכל סעיף: נתוני השאלה, הנדרש, מקום לתשובה שלכם והפתרון הרשמי. אביב = קיץ, חורף = סתיו.</p>
+<div class="meta"><span>10 שאלות</span><span>14 סעיפים</span><span>פתרונות רשמיים</span></div>
+<div class="tbl-wrap" style="margin-top:34px;text-align:start;--local-accent:#6366F1"><table class="gtable sumtbl"><thead><tr><th>#</th><th>מועד</th><th>שאלה</th><th>סעיף</th><th>%</th><th>נושא</th></tr></thead><tbody><tr><td>1</td><td><a href="#council-2017-summer-q3">אביב 2017</a></td><td>3</td><td>נדרש 2</td><td>4%</td><td>כלים ממוחשבים</td></tr><tr><td>2</td><td><a href="#council-2018-summer-q4">אביב 2018</a></td><td>4</td><td>סעיף 4 (טענה 4)</td><td>לא פוצל — השאלה כולה 6%</td><td>תהליך הביקורת</td></tr><tr><td>3</td><td><a href="#council-2024-special-q5">מועד מיוחד 2024 (יוני)</a></td><td>5</td><td>נדרש 2, נדרש 4</td><td>2% + 4% (השאלה כולה 6% בחלק הרלוונטי)</td><td>בקרות / ITGC, תהליך הביקורת</td></tr><tr><td>4</td><td><a href="#council-2025-summer-q5">אביב 2025</a></td><td>5</td><td>נדרש 1, 2, 3 (המיפוי כולל רק את נדרש 4)</td><td>4% + 2% + 4% (השאלה כולה 16%)</td><td>תהליך הביקורת</td></tr><tr><td>5</td><td><a href="#council-2018-winter-q1">חורף 2018</a></td><td>1</td><td>פריט 5</td><td>לא פוצל — השאלה כולה 14%</td><td>אבטחת מידע</td></tr><tr><td>6</td><td><a href="#council-2018-winter-q2">חורף 2018</a></td><td>2</td><td>נדרש 4</td><td>3%</td><td>בקרות / ITGC</td></tr><tr><td>7</td><td><a href="#council-2019-winter-q5">חורף 2019</a></td><td>5</td><td>נדרש 1, נדרש 2</td><td>3% + 3%</td><td>כלים ממוחשבים</td></tr><tr><td>8</td><td><a href="#council-2019-winter-q7">חורף 2019</a></td><td>7</td><td>נדרש 6 (המיפוי כולל את נדרש 1–5)</td><td>2%</td><td>תהליך הביקורת</td></tr><tr><td>9</td><td><a href="#council-2021-winter-q7">חורף 2021</a></td><td>7</td><td>נדרש 6 (המיפוי כולל את נדרש 1–5)</td><td>2%</td><td>תהליך הביקורת</td></tr><tr><td>10</td><td><a href="#council-2025-winter-q4">חורף 2025</a></td><td>4</td><td>נדרש 4</td><td>4%</td><td>תהליך הביקורת</td></tr></tbody></table></div>
+</header>
+<section class="chapter container" id="qs"><article class="standard" id="council-2017-summer-q3">
+  <div class="standard-header"><span class="standard-code">אביב 2017 · ש׳ 3</span><h3>חברת אלקטרובוקס – בדיקות אנליטיות ממוחשבות על דוח מלאי</h3></div>
+  <div class="purpose"><strong>סעיף:</strong> נדרש 2 · <strong>משקל:</strong> 4%<br><span class="srcs">בחינת מועצה קיץ 2017 (מועד אביב), שאלה 3, נדרש 2</span></div>
+  <details class="bg"><summary>📄 נתוני השאלה (לחצו לפתיחה)</summary><div class="summary"><p>הנך משמש כרואה חשבון מבקר של חברת אלקטרובוקס בע&quot;מ (להלן – &quot;החברה&quot;), העוסקת בשיווק ובמכירה של מכשירים אלקטרונים. לצורך ביקורת סעיף המלאי בחברה ליום 31 בדצמבר 2016 ביקשת מהחברה להפיק לך דוח יתרות מלאי לאותו מועד.</p>
+<p>להלן חלק מדוח יתרות המלאי דלעיל, כאשר המלאי בדוחות הכספיים של החברה ליום 31 בדצמבר 2016 נרשם בהתבסס על דוח זה.</p>
+<table>
+<thead>
+<tr>
+<th>מק&quot;ט</th>
+<th>שם פריט</th>
+<th>כמות ביחידות</th>
+<th>מספר מחסן</th>
+<th>מחיר ליחידה ש&quot;ח</th>
+<th>ערך כספי ש&quot;ח</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>110001</td>
+<td>סלולרי דגם 354</td>
+<td>17</td>
+<td>99</td>
+<td>2,850</td>
+<td>48,450</td>
+</tr>
+<tr>
+<td>110002</td>
+<td>סלולרי דגם 366</td>
+<td>1,254</td>
+<td>1</td>
+<td>3,500</td>
+<td>4,389,000</td>
+</tr>
+<tr>
+<td>...........</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>...........</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>110576</td>
+<td>מחשב דגם 199</td>
+<td>7</td>
+<td>99</td>
+<td>3,120</td>
+<td>21,840</td>
+</tr>
+<tr>
+<td>110577</td>
+<td>מחשב דגם 678</td>
+<td>188</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>...........</td>
+<td>...........</td>
+<td>...........</td>
+<td>...........</td>
+<td>...........</td>
+<td>...........</td>
+</tr>
+<tr>
+<td>...........</td>
+<td>...........</td>
+<td>...........</td>
+<td>...........</td>
+<td>...........</td>
+<td>...........</td>
+</tr>
+<tr>
+<td>111245</td>
+<td>מדפסת דיו דגם 123</td>
+<td>(5)</td>
+<td>99</td>
+<td>500</td>
+<td>(2,500)</td>
+</tr>
+<tr>
+<td>111246</td>
+<td>מדפסת לייזר דגם 444</td>
+<td>355</td>
+<td>1</td>
+<td>850</td>
+<td>301,750</td>
+</tr>
+<tr>
+<td>...........</td>
+<td>...........</td>
+<td>...........</td>
+<td>...........</td>
+<td>...........</td>
+<td>...........</td>
+</tr>
+<tr>
+<td>...........</td>
+<td>...........</td>
+<td>...........</td>
+<td>...........</td>
+<td>...........</td>
+<td>...........</td>
+</tr>
+<tr>
+<td>119998</td>
+<td>כבל הטענה סלולרי</td>
+<td>7,200</td>
+<td>1</td>
+<td>(12)</td>
+<td>(86,400)</td>
+</tr>
+<tr>
+<td>סה&quot;כ</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>12,547,628</td>
+</tr>
+</tbody></table>
+<p><strong>פרטים נוספים:</strong></p>
+<ul>
+<li>הדוח שהופק כולל 9,998 פריטים. ידוע לך כי ביום 31 בדצמבר 2015 היו במחסני החברה 12,125 פריטים.</li>
+<li>מחסן מספר 1 הינו המחסן הראשי של החברה הנמצא במפעל של החברה.</li>
+<li>מחסן מספר 99 הינו מחסן משני המשמש לאחסון מוצרים שנמכרים באופן איטי.</li>
+<li>החברה מנהלת את ערך המלאי שלה לפי שיטת &quot;נכנס ראשון יוצא ראשון&quot; (FIFO).</li>
+</ul>
+<p><strong>הערה:</strong> בשאלה זו אין צורך להתייחס למכפלות וסיכומים.</p>
+</div></details>
+  <div class="section-label">נדרש 2 · 4% · כלים ממוחשבים</div>
+  <div class="req"><h4>הנדרש</h4><p>פרט מה הן הבדיקות האנליטיות באמצעות כלי ממוחשב שהיית מבצע על דוח מלאי זה שהופק על ידי החברה. האם תשתמש בדגימה לצורך בדיקות אלו?</p>
+</div>
+  <textarea class="ans" placeholder="נסו לענות לבד לפני שאתם חושפים את הפתרון…"></textarea>
+  <button class="reveal" onclick="this.nextElementSibling.hidden=false;this.remove()">הצגת הפתרון הרשמי</button>
+  <div class="sol" hidden><h4>✓ פתרון רשמי</h4><p><strong>הערה (לכלל התשובה לשאלה 3):</strong> יובהר כי האמור להלן הינן דוגמאות והתקבלו תשובות שכללו דוגמאות אחרות רלוונטיות.</p>
+<p>סעיף 10 לתקן ביקורת מספר 79 בדבר &quot;נהלים אנליטיים&quot; מציין כי &quot;הסתמכות המבקר על בדיקות מבססות לצורכי הקטנה של סיכון אי הזיהוי המתייחס למצגים מסוימים שבדוחות הכספיים עשויה להיגזר מבדיקה של פרטים, מנהלים אנליטיים, או משילוב של שני אלה. ההחלטה באשר לאיזה נהלים ישתמש המבקר כדי להשיג מטרת ביקורת מסוימת מבוססת על שיקול דעתו של המבקר באשר לאפקטיביות וליעילות הצפויות של הנהלים הזמינים לצורכי הפחתה של סיכון אי הזיהוי בגין מצגים ספציפיים שבדוחות הכספיים&quot;.</p>
+<p>לגבי נאותות יתרת המלאי יהיה זה קשה להקטין את סיכון אי הזיהוי באמצעות נהלים אנליטיים בלבד ולכן שילוב של נהלים אנליטיים וכן בדיקה של פרטים היא הדרך הטובה לצורך הפחתה של סיכון אי הזיהוי.</p>
+<p>כאשר רואה החשבון המבקר מבצע בדיקות אנליטיות אין הוא מבצע דגימה שכן בדיקה זו לרוב היא בדיקה של האוכלוסייה הכוללת במדגם.</p>
+<p>הבדיקות האנליטיות שרואה החשבון המבקר יכול שיבצע באמצעות כלים ממוחשבים הן:</p>
+<ol>
+<li><strong>השוואה באמצעות כלים ממוחשבים בין הדוח של השנה הנוכחית לבין הדוח של שנה קודמת.</strong> השוואה זו תכלול את הבדיקות הבאות:<ol>
+<li>זיהוי פריטים שהיו קיימים בשנה קודמת ואינם קיימים השנה – במצב זה רואה החשבון המבקר יבדוק את נאותות הפריטים החסרים באמצעות איסוף של ראיות ביקורת משלימות.</li>
+<li>זיהוי פריטים שקיימים השנה ואינם קיימים בשנה קודמת – במצב זה רואה החשבון המבקר יבדוק את הפריטים החדשים באמצעות איסוף של ראיות ביקורת משלימות.</li>
+<li>זיהוי פריטים שהמחיר ליחידה שלהם השתנה מעל אחוז מסוים ביחס לשנה קודמת – במצב זה רואה החשבון המבקר יבדוק את נאותות השינוי באמצעות איסוף של ראיות ביקורת משלימות.</li>
+<li>זיהוי פריטים שהכמות שלהם השתנתה מעל אחוז מסוים ביחס לשנה קודמת – במצב זה רואה החשבון המבקר יבדוק את נאותות השינוי באמצעות איסוף של ראיות ביקורת משלימות.</li>
+<li>זיהוי פריטים שהערך הכספי שלהם השתנה מעל אחוז מסוים ביחס לשנה קודמת (תוצאה של סעיפים 3 ו-4 לעיל) – במצב זה רואה החשבון המבקר יבדוק את נאותות השינוי באמצעות איסוף של ראיות ביקורת משלימות.</li>
+</ol>
+</li>
+<li><strong>בדיקת הדוח של השנה באמצעות כלים ממוחשבים</strong> על ידי הבדיקות הבאות:<ol>
+<li>בדיקת חישוב הערך הכספי של כל שורה בדוח.</li>
+<li>זיהוי פריטים שכמות היחידות בהם הוא שלילי. אין סיבה שבדוח מלאי יהיו פריטים שליליים והדבר מצביע על הצגה מוטעית לכאורה בדוחות הכספיים.</li>
+<li>זיהוי פריטים שהמחיר ליחידה שלהם הוא שלילי. אין סיבה שבדוח מלאי יהיו פריטים שליליים והדבר מצביע על הצגה מוטעית לכאורה בדוחות הכספיים.</li>
+<li>זיהוי פריטים עם מחיר ליחידה 0 (שהופחתו במלואם) – יש לוודא את הסיבה שבה פריטים אלו הופחתו במלואם ושהדבר נעשה אחרי בחינה ולא כתוצאה מטעות.</li>
+<li>סינון כל הפריטים הנמצאים במחסן 99 – במצב זה רואה החשבון המבקר יבדוק את נאותות ההפרשה למלאי איטי ומלאי מת לפריטים אלו.</li>
+<li>זיהוי הפריטים בעלי הערך הכספי הגדול ביותר – דבר היכול לעזור לרואה החשבון המבקר בביצוע בדיקות פרטניות לפריטים אלו.</li>
+</ol>
+</li>
+</ol>
+<div class="kp"><b>נקודות מפתח לבדיקה עצמית:</b><ul><li>סעיף 10 לתקן ביקורת 79: הקטנת סיכון אי-זיהוי באמצעות בדיקת פרטים, נהלים אנליטיים או שילוב; במלאי – שילוב של שניהם</li><li>בבדיקה אנליטית ממוחשבת אין דגימה – בודקים את כל האוכלוסייה</li><li>השוואה לדוח שנה קודמת: פריטים שנעלמו, פריטים חדשים, שינויי מחיר/כמות/ערך מעל אחוז מסוים – ואיסוף ראיות משלימות</li><li>בדיקות על דוח השנה: חישוב מחדש של ערך כל שורה, איתור כמויות ומחירים שליליים (למשל פריטים 111245, 119998)</li><li>איתור פריטים במחיר 0 (הופחתו במלואם) ובירור הסיבה</li><li>סינון מחסן 99 לבחינת הפרשה למלאי איטי/מת; איתור הפריטים בעלי הערך הגבוה לבדיקה פרטנית</li></ul></div></div>
+  <div class="art-foot"><div class="art-actions"><a class="practice-link" href="https://eyalgoldman1313-creator.github.io/tech_audit_practice.github.io/#/case/council-2017-summer-q3" target="_blank" rel="noopener">🗂️ לסימולציה באתר התרגול</a></div></div>
+</article>
+<article class="standard" id="council-2018-summer-q4">
+  <div class="standard-header"><span class="standard-code">אביב 2018 · ש׳ 4</span><h3>חווה דעתך – האם ביקורת מערכות מידע היא נושא זניח (רו"ח מודעי)</h3></div>
+  <div class="purpose"><strong>סעיף:</strong> סעיף 4 (טענה 4) · <strong>משקל:</strong> לא פוצל — השאלה כולה 6%<br><span class="srcs">בחינת מועצה קיץ 2018 (מועד אביב), שאלה 4, סעיף 4</span></div>
+  <details class="bg"><summary>📄 נתוני השאלה (לחצו לפתיחה)</summary><div class="summary"><p>במסגרת דיון שנערך בעניין הבחינה ב&quot;ביקורת חשבונות ובעיות ביקורת מיוחדות&quot; הושמעו הדעות וחילופי הדברים דלקמן:</p>
+<p>(מתוך ארבע האמירות שבשאלה נכללה כאן רק אמירה 4, העוסקת בביקורת מערכות מידע.)</p>
+<ol start="4">
+<li><strong>אמר רו&quot;ח מודעי:</strong> &quot;לא ברור לי מדוע בכל בחינה ישנה שאלה בנושא ביקורת מערכות מידע ממוחשבות - הנושא זניח ואפילו אין בגינו תקן ביקורת ייחודי&quot;.</li>
+</ol>
+</div></details>
+  <div class="section-label">סעיף 4 · תהליך הביקורת</div>
+  <div class="req"><h4>הנדרש</h4><p>חווה דעתך על האמירה שצוטטה לעיל (בשאלה המקורית: חווה דעתך על האמירות וחילופי הדברים שצוטטו לעיל – יש להתייחס לכל אמירה בנפרד).</p>
+</div>
+  <textarea class="ans" placeholder="נסו לענות לבד לפני שאתם חושפים את הפתרון…"></textarea>
+  <button class="reveal" onclick="this.nextElementSibling.hidden=false;this.remove()">הצגת הפתרון הרשמי</button>
+  <div class="sol" hidden><h4>✓ פתרון רשמי</h4><p><strong>רואה חשבון מודעי טועה</strong> – תקני ביקורת 93 ו-98 מתייחסים לביקורת בסביבה של מערכות מידע. נושא ביקורת מערכות מידע ממוחשבות הינו אחד מהנושאים המרכזיים בביקורת שכן כמעט כל הישויות משתמשות במערכות מידע אשר מהוות בסיס לדוחות הכספיים, דבר המשפיע באופן מהותי על תכנון וביצוע הביקורת של רואה החשבון המבקר. כמו כן, גם בתקני ביקורת 104 ו-103 המתייחסים לביקורת בקרות פנימיות על דיווח כספי נכללת התייחסות לביקורת בקרות כלליות על מערכות מידע (ITGC).</p>
+<div class="kp"><b>נקודות מפתח לבדיקה עצמית:</b><ul><li>קביעה: רו"ח מודעי טועה</li><li>תקני ביקורת 93 ו-98 מתייחסים לביקורת בסביבת מערכות מידע</li><li>כמעט כל הישויות משתמשות במערכות מידע שהן בסיס לדוחות הכספיים – השפעה מהותית על תכנון וביצוע הביקורת</li><li>תקני ביקורת 104 ו-103 (בקרה פנימית על דיווח כספי) כוללים התייחסות לביקורת ITGC</li></ul></div></div>
+  <div class="art-foot"><div class="art-actions"><a class="practice-link" href="https://eyalgoldman1313-creator.github.io/tech_audit_practice.github.io/#/case/council-2018-summer-q4" target="_blank" rel="noopener">🗂️ לסימולציה באתר התרגול</a></div></div>
+</article>
+<article class="standard" id="council-2024-special-q5">
+  <div class="standard-header"><span class="standard-code">מועד מיוחד 2024 (יוני) · ש׳ 5</span><h3>חברת שק-רנית – ליקויי הרשאות (ITGC), סיכוני תרמית ובדיקת פקודות יומן</h3></div>
+  <div class="purpose"><strong>סעיף:</strong> נדרש 2, נדרש 4 · <strong>משקל:</strong> 2% + 4% (השאלה כולה 6% בחלק הרלוונטי)<br><span class="srcs">בחינת מועצה מועד מיוחד 2024 (יוני 2024), שאלה 5, נדרש 2, 4</span></div>
+  <details class="bg"><summary>📄 נתוני השאלה (לחצו לפתיחה)</summary><div class="summary"><p>רו&quot;ח צדקני משמש כרואה החשבון המבקר של חברת שק-רנית בע&quot;מ (להלן &quot;החברה&quot;) שהינה חברה ציבורית שניירות הערך שלה נסחרים בבורסה לניירות ערך בתל אביב. החברה עוסקת בייצור ומכירת חומרי בניין לחברות נדל&quot;ן גדולות בישראל. במסגרת היכרותו רבת השנים של החברה, רו&quot;ח צדקני יודע כי:</p>
+<ol>
+<li>מנהלי החברה נתונים ללחצים גדולים מצד בעלי המניות והדירקטוריון להשיג רווחיות גדולה.</li>
+<li>מנגנוני התגמול של מנהלי החברה קשורים ישירות לרווחיות של החברה.</li>
+<li>מנכ&quot;ל החברה שהינו גם בעל מניות מהותי בחברה הוא איש מאוד קשוח שמטיל את מרותו על הכפופים לו, אשר חוששים מאוד לתפקידיהם, ודורש תוצאות כספיות טובות בכל רבעון.</li>
+</ol>
+<p>לאור התוצאות הלא טובות של החברה בשנת 2020 והלחץ שהיה עליו ממנכ&quot;ל החברה, החליט סמנכ&quot;ל הכספים של החברה בחודש דצמבר 2020, ללא ידיעתו של רו&quot;ח צדקני וללא ידיעת אף גורם בחברה, לרשום בספרי החברה 4 פקודות יומן פיקטיביות שגרמו לגידול בחובות של 4 לקוחות והגדלת המכירות בסכום כולל של כ-20 מיליון ₪ (5 מיליון ₪ לכל פקודת יומן).</p>
+<p>במסגרת ביקורת דוחותיה הכספיים של החברה לשנת 2020 ביצע רו&quot;ח צדקני את נהלי הביקורת הבאים בקשר לבדיקת יתרות הלקוחות (המהותיות לביצוע הביקורת הייתה כ-10 מיליון ₪):</p>
+<ol>
+<li>דגימת לקוחות שיתרתם עולה על המהותיות לביצוע הביקורת ומשלוח בקשות לאישורי יתרה אליהם.</li>
+<li>דגימה של כל יתרות הלקוחות שגילן עולה על 3 חודשים, משלוח בקשות לאישורי יתרה ללקוחות אלו ובחינה האם נדרשת הפרשה לחובות מסופקים בגין לקוחות אלו.</li>
+<li>בדיקת של הבקרות במערכות המידע בחברה לרבות בדיקת בקרות כלליות של מערכות מידע.</li>
+</ol>
+<p>בביקורת של הדוחות הכספיים של החברה לשנת 2020 לא נתגלו ממצאי ביקורת מיוחדים מלבד ליקויים בבקרות כלליות של מערכות מידע ובכללם:</p>
+<ol>
+<li>ליקויים במתן הרשאות לעובדים במערכות המידע.</li>
+<li>סמנכ&quot;ל הכספים של החברה רשאי לבצע כל פעולה במערכות המידע של החברה לבדו.</li>
+</ol>
+<p>ליקויים אלו דווחו על ידי רו&quot;ח צדקני לדירקטוריון החברה במסגרת הישיבה שבה אושרו הדוחות הכספיים לשנת 2020 והוגדרו כליקויים משמעותיים בבקרה הפנימית של החברה. דוח רואה החשבון המבקר בקשר לדוחות הכספיים של החברה לשנת 2020 היה בנוסח האחיד. כמו כן, בחוות הדעת על אפקטיביות רכיבי הבקרה הפנימית על הדיווח הכספי של החברה ליום 31 בדצמבר 2020 צוין כי החברה קיימה באופן אפקטיבי, מכל הבחינות המהותיות, את רכיבי הבקרה המבוקרים.</p>
+<p>עד וכולל שנת 2023 סמנכ&quot;ל הכספים של החברה לא ביטל את פקודות היומן הפיקטיביות שרשם מאחר וחשש כי התוצאות של הדוחות הכספיים לשנים אלו אם יבוטלו פקודות אלו לא יספקו את מנכ&quot;ל החברה והדירקטוריון. לצורך הסתרה של חובות לקוחות אלו ביצע סמנכ&quot;ל הכספים בכל רבעון רישומים המזכים את הלקוחות הפיקטיביים ומחייבים לקוחות פיקטיביים אחרים כך שגילם של חובות הלקוחות הפיקטיביים אף פעם לא יעלה על שלושה חודשים.</p>
+<p>בביקורת הדוחות הכספיים של השנים 2021-2023, רו&quot;ח צדקני ביצע את אותם נהלי הביקורת המבססים בקשר לבדיקת יתרות הלקוחות. כל חוות הדעת ודוחות הסקירה שנתן רו&quot;ח צדקני עד וכולל שנת 2023 היו בנוסח האחיד.</p>
+<p>בחודש מאי 2024, לקראת סיום סקירת המידע הכספי לרבעון הראשון של 2024 גילה חשב החברה את הפעולות שביצע סמנכ&quot;ל הכספים ובמכתב אנונימי (מבלי להזדהות) ששלח לרו&quot;ח צדקני פירט את ממצאיו. בעקבות כך, הודיע רו&quot;ח צדקני על התפטרותו מתפקידו כרואה חשבון המבקר של החברה וזאת ללא עדכון של מנהלי החברה ודירקטוריון החברה על סיבת ההתפטרות.</p>
+</div></details>
+  <div class="section-label">נדרש 2 · 2% · בקרות / ITGC</div>
+  <div class="req"><h4>הנדרש</h4><p>פרט והסבר מהם גורמי הסיכון המתייחסים לתרמית שרו&quot;ח צדקני היה צריך לשים לב אליהם במהלך הביקורות שביצע בין השנים 2020-2023 שהיו עשויים לעורר את חשדו לסיכוני ביקורת הקשורים לתרמית?</p>
+</div>
+  <textarea class="ans" placeholder="נסו לענות לבד לפני שאתם חושפים את הפתרון…"></textarea>
+  <button class="reveal" onclick="this.nextElementSibling.hidden=false;this.remove()">הצגת הפתרון הרשמי</button>
+  <div class="sol" hidden><h4>✓ פתרון רשמי</h4><p>(הפתרון לשאלה כולה מתבסס על תקן ביקורת (ישראל) 240 בדבר אחריות המבקר לשקול אפשרות קיומה של תרמית במסגרת ביקורת של דוחות כספיים (להלן – &quot;תקן ביקורת 240&quot;).)</p>
+<p>גורמי הסיכון שרו&quot;ח צדקני היה צריך לשים אליהם לב היו:</p>
+<ol>
+<li>ליקויים במתן הרשאות לעובדים במערכות המידע.</li>
+<li>סמנכ&quot;ל הכספים של החברה רשאי לבצע כל פעולה במערכות המידע של החברה.</li>
+</ol>
+<p>ליקויים אלו יכולים להצביע על קיומו של סיכון לתרמית שתבוצע על ידי עובדים בעלי הרשאות יתר או כתוצאה מהיעדר הפרדת תפקידים נאותה בחברה וכן כתוצאה מהסמכות שניתנה לסמנכ&quot;ל הכספים לביצוע כל פעולה במערכת.</p>
+<p>כמו כן, גם הנסיבות הבאות המתוארות בשאלה מהוות גורמי סיכון:</p>
+<ol>
+<li>מנהלי החברה נתונים ללחצים גדולים מצד בעלי המניות והדירקטוריון להשיג רווחיות גדולה.</li>
+<li>מנגנוני התגמול של מנהלי החברה קשורים ישירות לרווחיות של החברה.</li>
+<li>מנכ&quot;ל החברה שהינו גם בעל מניות מהותי בחברה הוא איש מאוד קשוח שמטיל את מרותו על הכפופים לו, אשר חוששים מאוד לתפקידיהם, ודורש תוצאות כספיות טובות בכל רבעון.</li>
+</ol>
+<div class="kp"><b>נקודות מפתח לבדיקה עצמית:</b><ul><li>ליקויי ITGC כגורמי סיכון לתרמית: ליקויים במתן הרשאות לעובדים</li><li>סמנכ"ל הכספים רשאי לבצע כל פעולה במערכות המידע לבדו</li><li>הרשאות יתר והיעדר הפרדת תפקידים נאותה מאפשרים ביצוע תרמית</li><li>לחצים מצד בעלי המניות והדירקטוריון להשגת רווחיות</li><li>תגמול המנהלים קשור ישירות לרווחיות</li><li>מנכ"ל דומיננטי וקשוח הדורש תוצאות טובות בכל רבעון</li></ul></div></div><div class="section-label">נדרש 4 · 4% · תהליך הביקורת</div>
+  <div class="req"><h4>הנדרש</h4><p>פרט והסבר, מהו מענה הביקורת שרו&quot;ח צדקני היה צריך לבצע לאור הליקויים שזיהה בבקרות הכלליות של מערכות המידע בשנת 2020?</p>
+</div>
+  <textarea class="ans" placeholder="נסו לענות לבד לפני שאתם חושפים את הפתרון…"></textarea>
+  <button class="reveal" onclick="this.nextElementSibling.hidden=false;this.remove()">הצגת הפתרון הרשמי</button>
+  <div class="sol" hidden><h4>✓ פתרון רשמי</h4><p>לאור הליקויים שרואה החשבון גילה במתן הרשאות לעובדים במערכות המידע ולאור העובדה שסמנכ&quot;ל הכספים של החברה רשאי לבצע כל פעולה במערכות המידע של החברה, רואה החשבון היה חייב לתכנן מענה לסיכונים הנובעים מאותם ליקויים. לצורך כך עליו ליישם את סעיף 76 לתקן ביקורת 240 שבו צוין &quot;בכדי לתת מענה לסיכון הנובע מהתעלמות ההנהלה מבקרות, על המבקר לתכנן ולבצע נהלי ביקורת בכדי לבדוק את נאותות רישומי היומן שקיבלו ביטוי בכרטסת הראשית ותיאומים אחרים שנעשו במסגרת עריכת הדוחות הכספיים&quot;.</p>
+<p>בהתאם לכך, רואה החשבון המבקר היה נדרש לבדוק את פקודות היומן הבאות:</p>
+<ul>
+<li>הפקודות שבוצעו על ידי אנשי החברה תוך חלוקה לבעלי התפקיד שביצעו את אותן פקודות.</li>
+<li>הפקודות שבוצעו על ידי אנשים שלא אמורה להיות להם הרשאה - הפקודות היו אמורות להיבחן על ידי רואה החשבון המבקר לצורך בדיקת נאותות אותן פקודות יומן.</li>
+<li>פקודות שבוצעו על ידי סמנכ&quot;ל הכספים - הפקודות היו אמורות להיבחן באופן פרטני כדי לבחון את מהותן ואת הסיבה שהן נרשמו על ידי סמנכ&quot;ל הכספים ולא על ידי עובד שתפקידו להעביר פקודות יומן.</li>
+</ul>
+<div class="kp"><b>נקודות מפתח לבדיקה עצמית:</b><ul><li>ליקויי ההרשאות וההרשאה הבלתי מוגבלת של סמנכ"ל הכספים מחייבים תכנון מענה ביקורת לסיכון</li><li>סעיף 76 לתקן ביקורת 240 – מענה לסיכון התעלמות ההנהלה מבקרות</li><li>בדיקת נאותות רישומי היומן בכרטסת הראשית ותיאומים בעריכת הדוחות</li><li>ניתוח פקודות היומן לפי בעלי התפקיד שרשמו אותן</li><li>בחינת פקודות שנרשמו על ידי אנשים ללא הרשאה מתאימה</li><li>בחינה פרטנית של פקודות היומן שרשם סמנכ"ל הכספים – מהותן והסיבה לרישומן על ידו</li></ul></div></div>
+  <div class="art-foot"><div class="art-actions"><a class="practice-link" href="https://eyalgoldman1313-creator.github.io/tech_audit_practice.github.io/#/case/council-2024-special-q5" target="_blank" rel="noopener">🗂️ לסימולציה באתר התרגול</a></div></div>
+</article>
+<article class="standard" id="council-2025-summer-q5">
+  <div class="standard-header"><span class="standard-code">אביב 2025 · ש׳ 5</span><h3>חברת קייסי תעשיות פרמצבטיות – החלפת מערכת מידע והסבת נתונים בסקירת ביניים</h3></div>
+  <div class="purpose"><strong>סעיף:</strong> נדרש 1, 2, 3 (המיפוי כולל רק את נדרש 4) · <strong>משקל:</strong> 4% + 2% + 4% (השאלה כולה 16%)<br><span class="srcs">בחינת מועצה קיץ 2025 (מועד אביב), שאלה 5</span></div>
+  <details class="bg"><summary>📄 נתוני השאלה (לחצו לפתיחה)</summary><div class="summary"><p>הנך משמש כרואה החשבון המבקר של חברת קייסי תעשיות פרמצבטיות בע&quot;מ (להלן – &quot;החברה&quot;) העוסקת בייצור ושיווק של תרופות לבתי מרקחת ומניותיה נסחרות בבורסה לניירות ערך בתל אביב. החברה מיישמת את תקנות ניירות ערך (דוחות תקופתיים ומיידים) התש&quot;ל - 1970 בדבר הערכת אפקטיביות הבקרה הפנימית על הדיווח הכספי והגילוי. לקראת סקירת המידע הכספי ביניים של החברה לרבעון הראשון של שנת 2025 קיימת פגישה עם סמנכ&quot;ל הכספים של החברה. להלן תרשומת מפגישה זו:</p>
+<ul>
+<li>ב-1 בינואר 2025 החליפה החברה את מערכת המידע הממוחשבת שלה למערכת חדשה. לצורך זה הוסב כל המידע הכלול במערכת הישנה למערכת המידע החדשה. החל ממועד זה זנחה החברה את מערכת המידע הישנה והפסיקה לתחזוקה.</li>
+<li>החל מ-1 בינואר 2025, יישמה החברה תהליכי עבודה חדשים במערכת המידע בתחומי הייצור, ניהול המלאי והמכירות.</li>
+<li>כתוצאה מהחלפת מערכת המידע כאמור לעיל, החברה נקלעה לקשיים תפעוליים להלן:<ul>
+<li>א. קשיים בקבלת הזמנות מבתי מרקחת.</li>
+<li>ב. קשיים בהספקת תרופות שבגינן התקבלו הזמנות.</li>
+<li>ג. קשיים ברישום המשלוחים וההכנסות שבוצעו לבתי מרקחת.</li>
+<li>ד. קשיים בניהול מלאי של החברה.</li>
+</ul>
+</li>
+</ul>
+<p>כתוצאה מקשיים אלו, שהתגלו כבר באמצע ינואר 2025, פנתה החברה לחברת ייעוץ שתוביל את התיקונים הנדרשים. חברת הייעוץ הביאה כ-40 אנשים שעזרו לחברה לבצע פעולות ידניות לתיקון המידע במערכת המידע וכן לתיקון תהליכי העבודה במערכת המידע החדשה וזאת כדי לפתור את התקלות שהיו. אנשי חברת הייעוץ קיבלו &quot;הרשאות על&quot; במערכת המידע וזאת כדי שיוכלו לבצע את התיקונים הנדרשים במערכת המידע ולבחון את התהליכים.</p>
+<p>לדברי סמנכ&quot;ל הכספים, כל הליקויים שנמצאו במערכת המידע ותהליכי העבודה החדשים תוקנו עד לחודש אפריל 2025, המערכת פועלת באופן נאות והנתונים שיופקו ממנה לשנת 2025 יהיו תקינים ואמינים לחלוטין.</p>
+</div></details>
+  <div class="section-label">נדרש 1 · 4% · תהליך הביקורת</div>
+  <div class="req"><h4>הנדרש</h4><p>הסבר <strong>בקצרה</strong>, מהם נהלי הסקירה העיקריים שעל רואה חשבון מבקר לערוך בביצוע סקירה של מידע כספי ביניים של חברה מסוימת (ללא קשר לנתוני השאלה)?</p>
+</div>
+  <textarea class="ans" placeholder="נסו לענות לבד לפני שאתם חושפים את הפתרון…"></textarea>
+  <button class="reveal" onclick="this.nextElementSibling.hidden=false;this.remove()">הצגת הפתרון הרשמי</button>
+  <div class="sol" hidden><h4>✓ פתרון רשמי</h4><p>בהתאם לסעיפים 12 עד 29 לתקן סקירה (ישראל) 2410 של לשכת רואי חשבון בישראל בדבר &quot;סקירה של מידע כספי לתקופות ביניים הנערכת על ידי רואה החשבון המבקר של הישות&quot; (להלן – &quot;תקן 2410&quot;) נהלי הסקירה העיקריים שעל רואה חשבון מבקר לערוך בביצוע סקירה של מידע כספי ביניים, כוללים, בין היתר, את הנהלים הבאים:</p>
+<ol>
+<li>ביצוע עדכון הבנה של הישות וסביבתה לרבות הבקרה הפנימית שלה ממועד השגת ההבנה במסגרת הביקורת השנתית האחרונה (סעיף 13 לתקן 2410), תוך ביצוע הנהלים המפורטים בסעיף 15 לתקן סקירה 2410.</li>
+<li>השגת הבנה מספקת של הבקרה הפנימית המתייחסת להכנת מידע כספי לתקופות ביניים באשר זאת עשויה להיות שונה מהבקרה הפנימית המתייחסת למידע כספי שנתי (סעיף 13 לתקן 2410).</li>
+<li>קביעת הבירורים שיש לערוך ונהלי הסקירה האנליטיים והאחרים שיש ליישם, ולצורך זיהויים של אותם האירועים, העסקאות או המצגים שביחס אליהם יש לכוון את הבירורים או ליישם את נהלי הסקירה האנליטיים או האחרים (סעיף 14 לתקן 2410).</li>
+<li>עריכת בירורים, בעיקר עם האנשים האחראים לעניינים הכספיים והחשבונאיים (סעיף 19 לתקן 2410).</li>
+<li>יישום נהלי סקירה אנליטיים (סעיף 19 ונספח 2 בתקן 2410).</li>
+<li>יישום נהלי סקירה אחרים כמפורט בסעיף 21 לתקן 2410.</li>
+<li>השגת ראיות לכך שהמידע הכספי לתקופות ביניים תואם או מותאם עם הרשומות החשבונאיות שבבסיס הדוחות (סעיף 25 לתקן 2410).</li>
+<li>ביצוע בירור אם הדירקטוריון וההנהלה זיהו את כל האירועים שהתרחשו עד תאריך דוח הסקירה שעשויים לחייב התאמות במידע הכספי לתקופות ביניים או מתן גילוי בהם (סעיף 26 לתקן 2410).</li>
+<li>ביצוע בירור אם הדירקטוריון וההנהלה שינו את הערכתם לגבי יכולתה של הישות להמשיך כ&quot;עסק חי&quot; (סעיף 27 לתקן 2410).</li>
+</ol>
+<div class="kp"><b>נקודות מפתח לבדיקה עצמית:</b><ul><li>תקן סקירה 2410, סעיפים 12-29</li><li>עדכון הבנת הישות וסביבתה והבקרה הפנימית מאז הביקורת השנתית האחרונה</li><li>הבנת הבקרה הפנימית על הכנת מידע ביניים (עשויה להיות שונה מהשנתית)</li><li>בירורים, בעיקר עם האחראים לעניינים הכספיים והחשבונאיים</li><li>נהלי סקירה אנליטיים ונהלי סקירה אחרים</li><li>התאמת המידע לרשומות החשבונאיות</li><li>בירור אירועים עד מועד דוח הסקירה ושינוי בהערכת "עסק חי"</li></ul></div></div><div class="section-label">נדרש 2 · 2% · תהליך הביקורת</div>
+  <div class="req"><h4>הנדרש</h4><p>פרט והסבר, האם נדרש רואה החשבון המבקר לבצע נהלים לגבי הערכת אפקטיביות רכיבי הבקרה הפנימית שלה במסגרת סקירת מידע כספי לתקופות ביניים והאם עליו לבצע נהלי סקירה כלשהם ביחס לדיווח הרבעוני של החברה בנוגע לאפקטיביות רכיבי הבקרה הפנימית על דיווח כספי?</p>
+</div>
+  <textarea class="ans" placeholder="נסו לענות לבד לפני שאתם חושפים את הפתרון…"></textarea>
+  <button class="reveal" onclick="this.nextElementSibling.hidden=false;this.remove()">הצגת הפתרון הרשמי</button>
+  <div class="sol" hidden><h4>✓ פתרון רשמי</h4><p>רואה החשבון המבקר אינו נדרש לבצע פעולות ביקורת בגין רכיבי הבקרה הפנימית על דיווח כספי במסגרת סקירת דוחות ביניים. החובה לתת דוח רואה החשבון על אפקטיביות רכיבי הבקרה הפנימית חלה רק על רואה חשבון המבקר של תאגידים מסוימים בביקורת הדוחות השנתיים של תאגידים אלה.</p>
+<p>[לא נדרש בבחינה] יצוין כי בהתאם לסעיף 169 בחוק החברות, במידה ו - &quot;נודע לרואה החשבון המבקר אגב פעולת הביקורת, על ליקויים מהותיים בבקרה החשבונאית של החברה, ידווח על כך ליושב ראש הדירקטוריון&quot;.</p>
+<div class="kp"><b>נקודות מפתח לבדיקה עצמית:</b><ul><li>אין חובה לבצע נהלים על אפקטיביות רכיבי הבקרה הפנימית במסגרת סקירת ביניים</li><li>אין נהלי סקירה נדרשים לגבי הדיווח הרבעוני על אפקטיביות הבקרה</li><li>דוח על אפקטיביות רכיבי הבקרה הפנימית ניתן רק בביקורת הדוחות השנתיים של תאגידים מסוימים</li><li>(הרחבה, לא נדרש) סעיף 169 לחוק החברות – דיווח ליו"ר הדירקטוריון על ליקויים מהותיים</li></ul></div></div><div class="section-label">נדרש 3 · 4% · תהליך הביקורת</div>
+  <div class="req"><h4>הנדרש</h4><p>בקשר לסיכונים שהועלו בשיחה עם סמנכ&quot;ל הכספים בגין יישום מערכת המידע החדשה, פרט והסבר האם נהלי סקירת המידע הכספי ביניים של החברה לרבעון הראשון של שנת 2025 שתבצע יהיו שונים מנהלי הביקורת שתבצע בביקורת הדוחות הכספיים המבוקרים לשנת 2025?</p>
+</div>
+  <textarea class="ans" placeholder="נסו לענות לבד לפני שאתם חושפים את הפתרון…"></textarea>
+  <button class="reveal" onclick="this.nextElementSibling.hidden=false;this.remove()">הצגת הפתרון הרשמי</button>
+  <div class="sol" hidden><h4>✓ פתרון רשמי</h4><p>בהתאם לתקני ביקורת מקובלים, על רואה החשבון המבקר לבצע הערכת סיכונים להצגה מוטעית מהותית בדוחות הכספיים ולכל סיכון שזוהה ברמת המצגים או ברמת הדוחות הכספיים עליו לתכנן ולבצע נהלי ביקורת אשר ייתנו מענה לאותו סיכון. בהתאם לכך, על רואה החשבון המבקר המבצע ביקורת של דוחות כספיים להעריך את הסיכונים הנובעים מהחלפת מערכת מידע ולתת מענה לכל סיכון שזוהה ברמת המצג.</p>
+<p>בהתאם לסעיף 12 לתקן סקירה 2410, &quot;רואה החשבון המבקר חייב להיות בעל הבנה מספקת של הישות וסביבתה, לרבות הבקרה הפנימית שלה, המתייחסת לעריכת מידע כספי שנתי ומידע כספי לתקופות ביניים, שתאפשר לו לתכנן ולבצע את ההתקשרות, כדי שיוכל:</p>
+<ul>
+<li>א. לזהות סוגים אפשריים של הצגה מוטעית מהותית ולשקול את הסבירות לקיומם</li>
+<li>ב. לבחור בבירורים ובנוהלי סקירה אנליטיים ואחרים שיוכלו לספק לרואה החשבון המבקר בסיס לדווח אם בא לתשומת ליבו דבר הגורם לו לסבור כי המידע הכספי לתקופות ביניים אינו ערוך, מכל הבחינות המהותיות, בהתאם למסגרת הדיווח הכספי המתאימה&quot;.</li>
+</ul>
+<p>בהתאם לסעיף 29 לתקן סקירה 2410, &quot;כאשר בא לתשומת ליבו של רואה החשבון המבקר עניין הגורם לו לבחון אם יש לערוך התאמה מהותית במידע הכספי לתקופות ביניים כדי שיהיה ערוך, מכל הבחינות המהותיות, בהתאם למסגרת הדיווח הכספי המתאימה, על רואה החשבון המבקר לערוך בירורים נוספים או ליישם נהלים נוספים שיאפשרו לו להביע מסקנה בדוח הסקירה.</p>
+<p>מאחר והחלפת מערכת מידע משפיעה על הבקרה הפנימית של החברה, על רואה החשבון המבקר לעדכן את הבנתו בדבר הישות וסביבתה לרבות הבקרה הפנימית שלה ולבחור בבירורים ובנוהלי סקירה אנליטיים ואחרים כדי שיוכלו לספק לו בסיס למתן דוח הסקירה.</p>
+<p>כמו כן, מאחר ובא לתשומת ליבו של רואה החשבון המבקר עניין הגורם לו לבחון אם יש לערוך התאמה מהותית במידע הכספי לתקופות ביניים, עליו לבצע נהלים נוספים לפי שיקול דעתו כדי שיוכל להביע מסקנה. תקן הסקירה אינו מפרט מהם הנהלים שעליו לבצע, אך הדבר אינו מחייב את רואה החשבון המבקר לבצע נהלי ביקורת מלאים כפי שהיה נדרש לעשותם בביקורת של דוחות כספיים שנתיים בהתאם לתקני ביקורת מקובלים.</p>
+<div class="kp"><b>נקודות מפתח לבדיקה עצמית:</b><ul><li>בביקורת השנתית: הערכת סיכונים (כולל סיכוני החלפת המערכת) ונהלי ביקורת כמענה לכל סיכון ברמת המצג</li><li>בסקירה: סעיף 12 לתקן 2410 – הבנת הישות וסביבתה והבקרה הפנימית לזיהוי הצגות מוטעות ובחירת בירורים ונהלים אנליטיים</li><li>סעיף 29 לתקן 2410 – כשעולה עניין שמחייב בחינת התאמה מהותית, נדרשים בירורים/נהלים נוספים</li><li>החלפת המערכת משפיעה על הבקרה הפנימית – יש לעדכן את ההבנה</li><li>בסקירה אין חובה לבצע נהלי ביקורת מלאים כמו בביקורת השנתית – הנהלים שונים</li></ul></div></div>
+  <div class="art-foot"><div class="art-actions"><a class="practice-link" href="https://eyalgoldman1313-creator.github.io/tech_audit_practice.github.io/#/case/council-2025-summer-q5" target="_blank" rel="noopener">🗂️ לסימולציה באתר התרגול</a></div></div>
+</article>
+<article class="standard" id="council-2018-winter-q1">
+  <div class="standard-header"><span class="standard-code">חורף 2018 · ש׳ 1</span><h3>חברת הרכבת הקלה בשדרות – פריצות סייבר ודוח על הבקרה הפנימית</h3></div>
+  <div class="purpose"><strong>סעיף:</strong> פריט 5 · <strong>משקל:</strong> לא פוצל — השאלה כולה 14%<br><span class="srcs">בחינת מועצה חורף (סתיו) 2018, שאלה 1 (פריט 5 בלבד)</span></div>
+  <details class="bg"><summary>📄 נתוני השאלה (לחצו לפתיחה)</summary><div class="summary"><p>הנך רואה החשבון המבקר של חברת הרכבת הקלה בשדרות בע&quot;מ (להלן - &quot;החברה&quot;), העוסקת בהפעלת רכבת קלה בשדרות. החברה הינה חברה ממשלתית.</p>
+<p>בשאלה הוצגה טיוטת דוח של רואה החשבון המבקר בדבר אפקטיביות הבקרה הפנימית על דיווח כספי של החברה ליום 31 בדצמבר 2018, בנוסח האחיד המתאימה לחברות ממשלתיות (להלן &quot;הדוח&quot;). בטיוטה נכללה חוות דעת בלתי מסויגת לפיה החברה קיימה, מכל הבחינות המהותיות, בקרה פנימית אפקטיבית על דיווח כספי, בהתבסס על קריטריונים שנקבעו במסגרת המשולבת של בקרה פנימית שפורסמה על ידי COSO. [נוסח הטיוטה המלא אינו מובא כאן.]</p>
+<p><strong>מידע נוסף (מובא רק הפריט הנוגע למערכות מידע; בשאלה המקורית שבעה פריטים):</strong></p>
+<ol start="5">
+<li>במהלך שנת 2018 בוצעו מספר פריצות סייבר למחשבי החברה וכתוצאה מכך הושבתה פעולת החברה והרכבות למשך מספר ימים. נמצא כי מערכות המחשב של החברה אינן מוגנות באופן נאות כנגד פריצות סייבר.</li>
+</ol>
+<p><strong>הערה:</strong> לצורך התשובה הנך רשאי להניח הנחות רלבנטיות וסבירות, המתבססות על נתוני השאלה, ככל שנדרש.</p>
+</div></details>
+  <div class="section-label">נדרש 1 (פריט 5) · אבטחת מידע</div>
+  <div class="req"><h4>הנדרש</h4><p>פרט והסבר את ההשפעה, אם קיימת, של הפרטים במידע הנוסף דלעיל על הדוח (יש להתייחס לכל אחד מהסעיפים בנפרד) – כאן: פריט 5 (פריצות הסייבר).</p>
+</div>
+  <textarea class="ans" placeholder="נסו לענות לבד לפני שאתם חושפים את הפתרון…"></textarea>
+  <button class="reveal" onclick="this.nextElementSibling.hidden=false;this.remove()">הצגת הפתרון הרשמי</button>
+  <div class="sol" hidden><h4>✓ פתרון רשמי</h4><p>רואי חשבון מבקרים בחברות ממשלתיות כפופים להוראות תקן ביקורת 103 בדבר &quot;ביקורת על בקרה פנימית על דיווח כספי המשולבת עם ביקורת של דוחות כספיים&quot; (להלן– &quot;תקן ביקורת 103&quot;). תקן ביקורת 103 מבוסס על תקן ביקורת AS 2201 של ה-PCAOB האמריקאי, הידוע גם בשמו הקודם AS 5.</p>
+<p><strong>ה.</strong> &quot;מערכות מידע&quot; מהווה אחד הרכיבים של בקרה הפנימית הנדרשים בהתאם למודל COSO. על החברה לתת מענה לסיכוני סייבר כדי למנוע גישה לא מורשית לנתונים. בהתאם לכך, על החברה לקיים בקרות נאותות בנוגע לסיסמאות, בקרות גישה וכן תוכנית לשעת חירום שתאפשר שחזור נתונים העלולים להינזק כתוצאה מפריצת סייבר. אי קיומן של בקרות אלו עשוי לגרום לחולשה מהותית בבקרה הפנימית על הדיווח הכספי ולהכללת חוות דעת שלילית בדוח.</p>
+<p><strong>מתוך פתרון נדרש 2 (ניסוח מחדש של הדוח):</strong> בפסקת חוות הדעת השלילית, בין החולשות המהותיות שזוהו ונכללו בהערכת הדירקטוריון וההנהלה, נכללה החולשה: &quot;החברה לא קיימה בקרה אפקטיבית על מניעה של גישה לא מורשית למערכות המידע של החברה&quot;.</p>
+<div class="kp"><b>נקודות מפתח לבדיקה עצמית:</b><ul><li>'מערכות מידע' הוא אחד מרכיבי הבקרה הפנימית לפי מודל COSO</li><li>על החברה לתת מענה לסיכוני סייבר כדי למנוע גישה לא מורשית לנתונים</li><li>בקרות נדרשות: סיסמאות, בקרות גישה ותוכנית לשעת חירום לשחזור נתונים</li><li>היעדר הבקרות עשוי להוות חולשה מהותית בבקרה הפנימית על הדיווח הכספי</li><li>התוצאה: חוות דעת שלילית על אפקטיביות הבקרה הפנימית (תקן ביקורת 103)</li></ul></div></div>
+  <div class="art-foot"><div class="art-actions"><a class="practice-link" href="https://eyalgoldman1313-creator.github.io/tech_audit_practice.github.io/#/case/council-2018-winter-q1" target="_blank" rel="noopener">🗂️ לסימולציה באתר התרגול</a></div></div>
+</article>
+<article class="standard" id="council-2018-winter-q2">
+  <div class="standard-header"><span class="standard-code">חורף 2018 · ש׳ 2</span><h3>דני דניאל בע"מ – תהליך הרכש ומערכת מידע עם מרכז מידע</h3></div>
+  <div class="purpose"><strong>סעיף:</strong> נדרש 4 · <strong>משקל:</strong> 3%<br><span class="srcs">בחינת מועצה חורף (סתיו) 2018, שאלה 2 (נדרש 4 בלבד)</span></div>
+  <details class="bg"><summary>📄 נתוני השאלה (לחצו לפתיחה)</summary><div class="summary"><p>הנך משמש כרואה החשבון המבקר של חברת דני דניאל בע&quot;מ (להלן &quot;החברה&quot;). חברת דני דניאל הינה חברה ציבורית, שניירות הערך שלה נסחרים בבורסה לניירות ערך בתל אביב. החברה הינה סיטונאית של ציוד משרדי, שאותו היא קונה מספקים שונים. במהלך הביקורת על הדוחות הכספיים של החברה ליום 31 בדצמבר 2018, קיבלת מעוזרך את תרשים הזרימה שהכין (להלן &quot;תהליך הרכש&quot;) בחברה, וזאת על סמך תשובות לשאלות שקיבל מהנהלת החברה.</p>
+<p>[בשאלה המקורית מופיע תרשים זרימה של תהליך הרכש, שאינו מובא כאן. נדרשים 1–3 (תיאור התהליך, הבקרות הקיימות והסיכונים ברמת המצגים) אינם עוסקים במערכות מידע ואינם מובאים.]</p>
+</div></details>
+  <div class="section-label">נדרש 4 · 3% · בקרות / ITGC</div>
+  <div class="req"><h4>הנדרש</h4><p>לאחר עריכת התרשים גילה עוזרך, כי בתהליך הרכש של החברה מעורבת מערכת מידע ממוחשבת עם מרכז מידע (Data Base). פרט והסבר, אילו בקרות נוספות היית מצפה למצוא בחברה, אם בתהליך הרכש המתואר לעיל הייתה מעורבת מערכת מידע זו.</p>
+</div>
+  <textarea class="ans" placeholder="נסו לענות לבד לפני שאתם חושפים את הפתרון…"></textarea>
+  <button class="reveal" onclick="this.nextElementSibling.hidden=false;this.remove()">הצגת הפתרון הרשמי</button>
+  <div class="sol" hidden><h4>✓ פתרון רשמי</h4><p>כאשר מערכת ממוחשבת מעורבת בתהליך, הבקרות שהיינו מצפים לראות בתהליך הינן בקרות כלליות ובקרות יישום כמפורט להלן.</p>
+<p><strong>בקרות כלליות:</strong></p>
+<ol>
+<li>בקרות על מרכז המידע והפעולות ברשת – מכלול הפעולות שמבצעת ההנהלה כדי להקטין סיכונים במרכז המידע (Data Base) וברשת של החברה. פעולות אלו עשויות לכלול שמירה על מהימנות ודיוק מרכז המידע, הפרדת תפקידים, בקרות גישה, גיבוי הנתונים והתוכנות וכדומה.</li>
+<li>בקרות על רכישת תוכנות, שינויים ותחזוקה של תוכנות – מכלול הפעולות שמבצעת ההנהלה כדי להקטין סיכונים שנתונים לא אמינים יכנסו למרכז המידע של החברה, לרבות שימוש בתוכנות אמינות בלבד, ביצוע ניהול השינויים בתוכנות כך שלא יתאפשר לגורמים בלתי מורשים לבצע מעילה או תרמית, העלולות לגרום לדיווח כספי לא נאות.</li>
+<li>בקרות על אבטחת גישה – מכלול הפעולות שמבצעת ההנהלה כדי להקטין סיכונים של הרס נתונים ומידע וכדי להקטין את הסיכון לביצוע שינויים בלתי מורשים במידע, לרבות חסימה של גישה לא מורשית על ידי גורמים לא מורשים.</li>
+<li>בקרות על רכישה, פיתוח ותחזוקה של מערכות יישום - מכלול הפעולות שמבצעת ההנהלה כדי להקטין סיכונים שנתונים לא אמינים יכנסו למרכז המידע של החברה, לרבות שימוש במערכות יישום אמינות בלבד.</li>
+</ol>
+<p><strong>בקרות יישום:</strong></p>
+<p>סעיף 9 לנספח 2 לתקן ביקורת 93 בדבר &quot;הבנה של הגוף המבוקר וסביבתו, והערכת סיכונים המתייחסים להצגה מוטעית מהותית&quot;, מתייחס למערכות מידע ממוחשבות וקובע כי &quot;מערכת המידע הרלבנטית ליעדי הדיווח הכספי, הכוללת את מערכת הדיווח הכספי, מורכבת מהנהלים והרשומות שנקבעו לצורך הייזום, הרישום, והעיבוד של עסקאותיו של הגוף המבוקר והדיווח עליהן...&quot;.</p>
+<p>בהתאם לכך, הגוף המבוקר עשוי להשתמש בבקרות יישום הבאות כאשר עסקאות מבוצעות באמצעות מערכות מידע:</p>
+<ol>
+<li>בקרות על ייזום העסקאות – בקרות במערכת הממוחשבת על נאותות ייזום העסקאות אם מבוצעות באופן ממוחשב.</li>
+<li>בקרות על רישום העסקאות – בקרות על זיהוי וקליטה של המידע המתייחס לעסקאות או לאירועים.</li>
+<li>בקרות על עיבוד העסקאות – פונקציות כגון עריכה ואימות, חישובים, מדידה, הערכה, תמצות והתאמות.</li>
+<li>בקרות על דיווח העסקאות – בקרות על הכנה של דוחות כספיים או מידע אחר במתכונת אלקטרונית או מודפסת שהגוף המבוקר משתמש בה לצורך מדידה וסקירה של ביצועיו הכספיים ולצורך פונקציות אחרות.</li>
+</ol>
+<div class="kp"><b>נקודות מפתח לבדיקה עצמית:</b><ul><li>כשמעורבת מערכת ממוחשבת – נדרשות בקרות כלליות ובקרות יישום</li><li>ITGC: בקרות על מרכז המידע והרשת (מהימנות, הפרדת תפקידים, גישה, גיבוי)</li><li>ITGC: רכישה, שינויים ותחזוקה של תוכנות וניהול שינויים למניעת מעילה/תרמית</li><li>ITGC: אבטחת גישה – מניעת הרס נתונים ושינויים בלתי מורשים; רכישה/פיתוח/תחזוקה של מערכות יישום אמינות</li><li>בקרות יישום לפי תקן ביקורת 93 (נספח 2 סעיף 9): ייזום, רישום, עיבוד ודיווח של עסקאות</li></ul></div></div>
+  <div class="art-foot"><div class="art-actions"><a class="practice-link" href="https://eyalgoldman1313-creator.github.io/tech_audit_practice.github.io/#/case/council-2018-winter-q2" target="_blank" rel="noopener">🗂️ לסימולציה באתר התרגול</a></div></div>
+</article>
+<article class="standard" id="council-2019-winter-q5">
+  <div class="standard-header"><span class="standard-code">חורף 2019 · ש׳ 5</span><h3>רומי בע"מ – דוח גיול לקוחות ובדיקות באמצעות כלים ממוחשבים</h3></div>
+  <div class="purpose"><strong>סעיף:</strong> נדרש 1, נדרש 2 · <strong>משקל:</strong> 3% + 3%<br><span class="srcs">בחינת מועצה חורף (סתיו) 2019, שאלה 5 (נדרש 1–2 בלבד)</span></div>
+  <details class="bg"><summary>📄 נתוני השאלה (לחצו לפתיחה)</summary><div class="summary"><p>הנך משמש כרואה חשבון מבקר של חברת רומי בע&quot;מ (להלן – &quot;החברה&quot;), העוסקת בשיווק ובמכירה של מחשבים ניידים. לצורך ביקורת סעיף הלקוחות והפרשה לחובות מסופקים בדוחות הכספיים של החברה ליום 31 בדצמבר 2019 ביקשת מהחברה להפיק לך דוח גיול לקוחות לאותו מועד המחשב את ההפרשה לחובות המסופקים של החברה. להלן חלק מדוח גיול הלקוחות דלעיל (בש&quot;ח):</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>הלקוח</th>
+<th>0-30 ימי פיגור</th>
+<th>31-60 ימי פיגור</th>
+<th>61-90 ימי פיגור</th>
+<th>91-120 ימי פיגור</th>
+<th>מעל 120 ימי פיגור</th>
+<th>סה&quot;כ יתרת לקוח</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>רשת המחשבים בע&quot;מ</td>
+<td>120,000</td>
+<td>-</td>
+<td>80,000</td>
+<td>30,000</td>
+<td>260,000</td>
+<td>490,000</td>
+</tr>
+<tr>
+<td>2</td>
+<td>עולם המחשב בע&quot;מ</td>
+<td>30,000</td>
+<td>20,000</td>
+<td>-</td>
+<td>-</td>
+<td>(90,000)</td>
+<td>(40,000)</td>
+</tr>
+<tr>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+<tr>
+<td>17</td>
+<td>הציוד החכם בע&quot;מ</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>80,000</td>
+<td>80,000</td>
+</tr>
+<tr>
+<td>18</td>
+<td>מחשב לכל ילד בע&quot;מ</td>
+<td>70,000</td>
+<td>150,000</td>
+<td>-</td>
+<td>40,000</td>
+<td>-</td>
+<td>260,000</td>
+</tr>
+<tr>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+<tr>
+<td>35</td>
+<td>משרד החינוך</td>
+<td>450,000</td>
+<td>(120,000)</td>
+<td>30,000</td>
+<td>(150,000)</td>
+<td>200,000</td>
+<td>410,000</td>
+</tr>
+<tr>
+<td>36</td>
+<td>המשרד הממוחשב בע&quot;מ</td>
+<td>350,000</td>
+<td>100,000</td>
+<td>60,000</td>
+<td>140,000</td>
+<td>-</td>
+<td>650,000</td>
+</tr>
+<tr>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+<tr>
+<td>88</td>
+<td>מחשבים זה אנחנו בע&quot;מ</td>
+<td>40,000</td>
+<td>130,000</td>
+<td>70,000</td>
+<td>60,000</td>
+<td>-</td>
+<td>300,000</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>סה&quot;כ</strong></td>
+<td>22,000,000</td>
+<td>11,255,000</td>
+<td>5,600,000</td>
+<td>1,400,000</td>
+<td>2,650,000</td>
+<td>42,905,000</td>
+</tr>
+<tr>
+<td></td>
+<td>שיעור הפרשה לחובות מסופקים</td>
+<td>1%</td>
+<td>2%</td>
+<td>5%</td>
+<td>10%</td>
+<td>30%</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>הפרשה כללית לחובות מסופקים</td>
+<td>220,000</td>
+<td>225,100</td>
+<td>280,000</td>
+<td>140,000</td>
+<td>795,000</td>
+<td>1,660,100</td>
+</tr>
+</tbody></table>
+<p><strong>מידע נוסף:</strong></p>
+<ul>
+<li>0 ימי פיגור מייצג יתרות לקוחות שלא הגיע מועד פירעונן.</li>
+<li>הדוח שהופק כולל 88 לקוחות. ידוע לך כי ביום 31 בדצמבר 2018 היו בדוח גיול הלקוחות 125 לקוחות.</li>
+<li>המדיניות החשבונאית של החברה הינה לבצע הפרשה לחובות מסופקים כללית על סמך דוח גיול הלקוחות ולא לבצע הפרשה לחובות מסופקים ספציפית.</li>
+<li>האחוז לצורך חישוב ההפרשה הכללית לחובות מסופקים נקבע על ידי הנהלת החברה בשנים קודמות ועל סמך ציפיות גביה לגבי העתיד.</li>
+<li>ההפרשה הכללית לחובות מסופקים חושבה על ידי הכפלה של אחוז המתאים לצורך ההפרשה לחובות מסופקים בסכום החוב המתאים של סה&quot;כ הלקוחות בכל עמודת ימי פיגור.</li>
+</ul>
+<p><strong>הערה:</strong> אין צורך להתייחס למכפלות וסיכומים.</p>
+<p>[נדרשים 3–4 (בדיקות מבססות על יתרת הלקוחות ואישורי יתרה) אינם עוסקים במערכות מידע ואינם מובאים.]</p>
+</div></details>
+  <div class="section-label">נדרש 1 · 3% · כלים ממוחשבים</div>
+  <div class="req"><h4>הנדרש</h4><p>לצורך שימוש במידע המופק על ידי ישות מבוקרת על רואה החשבון המבקר להעריך האם המידע שהופק הינו נאות ומספק לצרכי הביקורת. פרט מה הן לדעתך הבדיקות שעל רואה החשבון המבקר לבצע, בדרך כלל, על מידע המופק על ידי ישות מבוקרת כדי שמידע זה יוכל לשמש אותו בתהליך הביקורת?</p>
+</div>
+  <textarea class="ans" placeholder="נסו לענות לבד לפני שאתם חושפים את הפתרון…"></textarea>
+  <button class="reveal" onclick="this.nextElementSibling.hidden=false;this.remove()">הצגת הפתרון הרשמי</button>
+  <div class="sol" hidden><h4>✓ פתרון רשמי</h4><p>סעיף 11 לתקן ביקורת (ישראל) 500 בדבר ראיות ביקורת קובע כי &quot;כאשר מידע שהופק על-ידי הגוף המבוקר משמש את המבקר בביצוע נהלי ביקורת, על המבקר להשיג ראיות ביקורת בדבר דיוק המידע ושלמותו&quot;.</p>
+<p>בהתאם לכך, לגבי הדוחות המופקים על ידי המבוקר הכוללים מידע המשמש את רואה חשבון מבקר לצורך השגת ראיות ביקורת, על רואה החשבון המבקר לבדוק, בין היתר, כי:</p>
+<ul>
+<li>הדוח כולל את <strong>כל</strong> המידע הרלוונטי,</li>
+<li>פרטי המידע הכלולים בדוח הינם נכונים ותקפים.</li>
+</ul>
+<p>ראיות ביקורת בדבר דיוק המידע ושלמותו עשויות להתקבל באמצעות:</p>
+<ul>
+<li>בדיקת בקרות הקשורות להכנה ושמירה של המידע.</li>
+<li>ביצוע נהלי ביקורת (דגימה) בקשר לפרטי המידע הנכללים בדוח המופק על ידי המבוקר.</li>
+</ul>
+<p>הסוגיות העשויות להעלות חשד בקשר למידע הכלול בדוח הגיול ובמידע הנוסף הן:</p>
+<ol>
+<li>שלמות - השנה בדוח יש 88 פריטים ובשנה קודמת היו 125 פריטים, דבר שיכול להצביע על כך שהדוח אינו שלם. בהקשר זה יש לוודא התאמת סה&quot;כ יתרת לקוחות על פי דוח הגיול שהתקבל לסה&quot;כ יתרת הלקוחות בספרי החברה.</li>
+<li>דיוק – ניתן לראות בדוח שיש עמודות עם נתון שלילי (כנראה תקבול או זיכוי שלא שויך נכון לחוב) (לקוח 35) או יתרה שלילית (לקוח 2), דבר שיכול להצביע על אי נאותות הדיוק של הדוח שהתקבל.</li>
+</ol>
+<div class="kp"><b>נקודות מפתח לבדיקה עצמית:</b><ul><li>תקן ביקורת 500 סעיף 11: יש להשיג ראיות על דיוק ושלמות מידע שהפיק הגוף המבוקר</li><li>לבדוק שהדוח כולל את כל המידע הרלוונטי ושפרטיו נכונים ותקפים</li><li>דרכים: בדיקת בקרות על הכנת ושמירת המידע, ודגימת פרטי מידע מהדוח</li><li>סימן לאי שלמות: 88 לקוחות לעומת 125 בשנה קודמת – יש להתאים את סה"כ הדוח לספרים</li><li>סימן לאי דיוק: עמודות עם נתון שלילי (לקוח 35) ויתרה שלילית (לקוח 2)</li></ul></div></div><div class="section-label">נדרש 2 · 3% · כלים ממוחשבים</div>
+  <div class="req"><h4>הנדרש</h4><p>פרט מה הן הבדיקות האנליטיות באמצעות כלי ממוחשב שהיית מבצע על דוח גיול זה שהופק על ידי החברה?</p>
+</div>
+  <textarea class="ans" placeholder="נסו לענות לבד לפני שאתם חושפים את הפתרון…"></textarea>
+  <button class="reveal" onclick="this.nextElementSibling.hidden=false;this.remove()">הצגת הפתרון הרשמי</button>
+  <div class="sol" hidden><h4>✓ פתרון רשמי</h4><p>הבדיקות האנליטיות שרואה החשבון המבקר יכול שיבצע באמצעות כלים ממוחשבים הן:</p>
+<ol>
+<li>השוואה באמצעות כלים ממוחשבים בין הדוח של השנה הנוכחית לבין הדוח של שנה קודמת. השוואה זו תכלול את הבדיקות הבאות:<ol>
+<li>זיהוי לקוחות שהיו קיימים בשנה קודמת ואינם קיימים השנה – במצב זה רואה החשבון המבקר יבדוק את נאותות הלקוחות החסרים באמצעות איסוף של ראיות ביקורת משלימות.</li>
+<li>זיהוי לקוחות שקיימים השנה ואינם קיימים בשנה קודמת – במצב זה רואה החשבון המבקר יבדוק את הלקוחות החדשים באמצעות איסוף של ראיות ביקורת משלימות.</li>
+<li>זיהוי לקוחות שהערך הכספי שלהם השתנה מעל אחוז מסוים ביחס לשנה קודמת – במצב זה רואה החשבון המבקר יבדוק את נאותות השינוי באמצעות איסוף של ראיות ביקורת משלימות.</li>
+<li>זיהוי לקוחות שממוצע ימי הלקוחות שלהם השתנה מעל אחוז מסוים ביחס לשנה קודמת – במצב זה רואה החשבון המבקר יבדוק את נאותות השינוי באמצעות איסוף של ראיות ביקורת משלימות.</li>
+<li>זיהוי של האחוז הממוצע של ההפרשה לחובות מסופקים ביחס ליתרת הלקוחות ביחס לשנה קודמת - במצב זה רואה החשבון המבקר יבדוק את נאותות השינוי באמצעות איסוף של ראיות ביקורת משלימות.</li>
+<li>בדיקה של ימי הלקוחות ביחס לשנה קודמת - במצב זה רואה החשבון המבקר יבדוק את נאותות השינוי באמצעות איסוף של ראיות ביקורת משלימות.</li>
+</ol>
+</li>
+<li>בדיקת הדוח של השנה באמצעות כלים ממוחשבים על ידי הבדיקות הבאות:<ol>
+<li>בדיקת חישוב הסיכום של כל שורה בדוח.</li>
+<li>זיהוי לקוחות שהיתרה שלהם שלילית - דבר היכול לעזור לרואה החשבון המבקר בביצוע בדיקות פרטניות לפריטים אלו.</li>
+<li>זיהוי לקוחות שיש להם חוב בפיגור מעל מספר ימים מסוים - דבר היכול לעזור לרואה החשבון המבקר בביצוע בדיקות פרטניות לפריטים אלו.</li>
+<li>גיול מחדש של נתוני הלקוחות (חשבוניות זיכויים ותקבולים לפי תאריך) כדי לוודא שדוח הגיול הינו נאות.</li>
+<li>זיהוי הלקוחות בעלי הערך הכספי הגדול ביותר – דבר היכול לעזור לרואה החשבון המבקר בביצוע בדיקות פרטניות לפריטים אלו.</li>
+</ol>
+</li>
+</ol>
+<div class="kp"><b>נקודות מפתח לבדיקה עצמית:</b><ul><li>השוואה ממוחשבת לדוח השנה הקודמת: לקוחות שנעלמו, לקוחות חדשים</li><li>זיהוי שינויים חריגים בערך הכספי ובממוצע ימי הלקוחות מעל אחוז מסוים</li><li>השוואת אחוז ההפרשה הממוצע וימי הלקוחות לשנה קודמת, ואיסוף ראיות משלימות לכל חריג</li><li>בדיקת הדוח השוטף: חישוב מחדש של סיכומי השורות</li><li>זיהוי יתרות שליליות, חובות בפיגור מעל סף ולקוחות בעלי ערך גבוה לבדיקות פרטניות</li><li>גיול מחדש של הנתונים (חשבוניות, זיכויים, תקבולים לפי תאריך) לאימות נאותות הגיול</li></ul></div></div>
+  <div class="art-foot"><div class="art-actions"><a class="practice-link" href="https://eyalgoldman1313-creator.github.io/tech_audit_practice.github.io/#/case/council-2019-winter-q5" target="_blank" rel="noopener">🗂️ לסימולציה באתר התרגול</a></div></div>
+</article>
+<article class="standard" id="council-2019-winter-q7">
+  <div class="standard-header"><span class="standard-code">חורף 2019 · ש׳ 7</span><h3>קינג בע"מ – החלפת מערכת המידע הפיננסי</h3></div>
+  <div class="purpose"><strong>סעיף:</strong> נדרש 6 (המיפוי כולל את נדרש 1–5) · <strong>משקל:</strong> 2%<br><span class="srcs">בחינת מועצה חורף (סתיו) 2019, שאלה 7</span></div>
+  <details class="bg"><summary>📄 נתוני השאלה (לחצו לפתיחה)</summary><div class="summary"><p>הנך משמש כרואה החשבון המבקר של חברת קינג בע&quot;מ (להלן – &quot;החברה&quot;) העוסקת בייבוא ושיווק של מוצרי חשמל לשימוש ביתי, החברה הינה ציבורית ומניותיה נסחרות בבורסה לניירות ערך בתל אביב. החברה מיישמת את תקנות ניירות ערך (דוחות תקופתיים ומיידים) התש&quot;ל - 1970, בדבר הערכת אפקטיביות הבקרה הפנימית על הדיווח הכספי והגילוי.</p>
+<p>במסגרת תכנון הביקורת של הדוחות הכספיים של שנת 2019 קיימת פגישה עם סמנכ&quot;ל הכספים של החברה בתחילת חודש ינואר 2020. להלן תרשומת מפגישה זו:</p>
+<p>ב-1 יוני 2019 החליפה החברה את מערכת המידע הפיננסי הממוחשבת שלה למערכת חדשה. לצורך זה הוסב כל המידע הכלול במערכת הישנה למערכת החדשה. החל ממועד זה זנחה החברה את מערכת המידע הישנה והפסיקה לתחזקה.<br>החל מ-1 ביוני 2019, יישמה החברה תהליכי עבודה חדשים בתחומי הרכש, ניהול מלאי והמכירות.<br>כתוצאה מהחלפת מערכת המידע דלעיל החברה נקלעה לקשיים תפעוליים להלן:</p>
+<p>א. קשיים בהנפקת חשבוניות ללקוחות. דווח כי הבעיה נפתרה בתחילת ספטמבר 2019.<br>ב. קשיים בקליטת חשבוניות מספקים ומעקב אחרי תשלומים. דווח כי הבעיה נפתרה בתחילת אוגוסט 2019.<br>ג. מידע חסר בבסיס הנתונים של החברה כתוצאה מליקויים בתהליך ההסבה. דווח כי הבעיה נפתרה בחודש יולי 2019.</p>
+<p>לדברי סמנכ&quot;ל הכספים כל הליקויים שנמצאו במערכת המידע הפיננסי תוקנו והמערכת פועלת באופן נאות והנתונים המופקים ממנה לשנת 2019 תקינים ואמינים לחלוטין.</p>
+<p>לגבי תהליכי העבודה החדשים שהוטמעו בחברה, טען סמנכ&quot;ל הכספים, כי אלה הוכתרו בהצלחה מירבית, ולא התגלו קשיים משמעותיים ביישומם.</p>
+</div></details>
+  <div class="section-label">נדרש 6 · 2% · תהליך הביקורת</div>
+  <div class="req"><h4>הנדרש</h4><p>פרט את ההשפעה של האמור בנתוני השאלה על חוות דעת רואה החשבון המבקר:<br>6.1 על הדוחות הכספיים. (1%)<br>6.2 על הדוח על אפקטיביות רכיבי הבקרה הפנימית על הדיווח הכספי. (1%)</p>
+</div>
+  <textarea class="ans" placeholder="נסו לענות לבד לפני שאתם חושפים את הפתרון…"></textarea>
+  <button class="reveal" onclick="this.nextElementSibling.hidden=false;this.remove()">הצגת הפתרון הרשמי</button>
+  <div class="sol" hidden><h4>✓ פתרון רשמי</h4><p><strong>נדרש 6.1:</strong> במידה ורואה החשבון המבקר יניח את דעתו כי הדוחות הכספיים לא כוללים הצגה מוטעית מהותית כתוצאה מהטמעה של מערכת מידע חדשה כי אז הוא ייתן דוח רואה חשבון בנוסח האחיד. במידה ויהיו בדוחות הכספיים הצגות מוטעות מהותיות שלא יתוקנו ייתן רואה החשבון המבקר חוות דעת שלא בנוסח האחיד (הסתייגות או חוות דעת שלילית – לפי המהותיות).</p>
+<p><strong>נדרש 6.2:</strong> בקרות כלליות על מערכת המידע הינן אחד מרכיבי בקרה פנימית על דיווח כספי שנדרש לבדוק את האפקטיביות שלהן. מערכת המידע גם משפיעה על תהליכים אחרים, כגון תהליך סגירת הדוחות הכספיים וכן תהליכים מהותיים מאוד.</p>
+<p>רואה החשבון המבקר יבחן האם הליקויים שנתגלו בהטמעת מערכת המידע תוקנו עד לסוף השנה. במידה והבקרות הכלליות ובקרות היישום במערכת המידע החדשה הינן אפקטיביות ליום 31 בדצמבר 2019, דהיינו לא קיימת חולשה מהותית בבקרות אלו, תינתן חוות דעת חלקה על אפקטיביות רכיבי בקרה פנימית על דיווח כספי (בהנחה כי לא קיימות חולשות מהותיות ברכיבי בקרה פנימית אחרים).</p>
+<div class="kp"><b>נקודות מפתח לבדיקה עצמית:</b><ul><li>דוחות כספיים: אם אין הצגה מוטעית מהותית – נוסח אחיד; אם יש שלא תוקנה – הסתייגות או שלילית לפי המהותיות</li><li>ITGC הם אחד מרכיבי הבקרה הפנימית על דיווח כספי שאת אפקטיביותם יש לבדוק</li><li>מערכת המידע משפיעה גם על תהליך סגירת הדוחות ועל תהליכים מהותיים מאוד</li><li>יש לבחון אם הליקויים תוקנו עד סוף השנה (31.12.2019)</li><li>אם הבקרות אפקטיביות לסוף השנה ואין חולשה מהותית אחרת – חוות דעת חלקה</li></ul></div></div>
+  <div class="art-foot"><div class="art-actions"><a class="practice-link" href="https://eyalgoldman1313-creator.github.io/tech_audit_practice.github.io/#/case/council-2019-winter-q7" target="_blank" rel="noopener">🗂️ לסימולציה באתר התרגול</a></div></div>
+</article>
+<article class="standard" id="council-2021-winter-q7">
+  <div class="standard-header"><span class="standard-code">חורף 2021 · ש׳ 7</span><h3>קייסי בע"מ – מעבר לענן ופריצת סייבר</h3></div>
+  <div class="purpose"><strong>סעיף:</strong> נדרש 6 (המיפוי כולל את נדרש 1–5) · <strong>משקל:</strong> 2%<br><span class="srcs">בחינת מועצה חורף (סתיו) 2021, שאלה 7</span></div>
+  <details class="bg"><summary>📄 נתוני השאלה (לחצו לפתיחה)</summary><div class="summary"><p>הנך משמש כרואה החשבון המבקר של חברת קייסי בע&quot;מ (להלן – &quot;החברה&quot;), שהינה חברה ציבורית גדולה, המעסיקה אלפי עובדים, שניירות הערך שלה נסחרים בבורסה לניירות ערך בתל אביב. לחברה שלוש מערכות מידע ממוחשבות עיקריות, כדלהלן:</p>
+<ol>
+<li>מערכת לניהול קשרי לקוחות (CRM).</li>
+<li>מערכת פיננסית - הנהלת חשבונות, ודיווח כספי.</li>
+<li>מערכת לניהול משאבי אנוש והשכר.</li>
+</ol>
+<p>בשנת 2020 החליטה הנהלת החברה להעביר את מערכת ניהול קשרי הלקוחות לסביבת &quot;ענן פרטי&quot; (Private Cloud) ואת המערכת לניהול משאבי אנוש והשכר לסביבת &quot;ענן ציבורי&quot; (Public Cloud). לגבי מערכת הנהלת החשבונות והדיווח הכספי הוחלט כי זו תישאר על מחשבי החברה במשרדיה.</p>
+<p>בשנת 2021 אירעה פריצת סייבר למאגרי המידע במערכת ניהול משאבי האנוש והשכר, ונגנב מידע אישי על העובדים, כגון: שמות, פרטי חשבון בנק, שכר, אופציות, בונוסים הערכות עובדים וכד&#39;. במענה לדרישת הפורצים, שילמה להם החברה כופר בסך 2 מיליון ש&quot;ח תוך הסתרת האירוע מהעובדים ומהציבור ואי דיווח עליו לרשויות הרלוונטיות. תשלום הכופר הוסווה ונרשם על ידי החברה בספריה ודווח על ידה כתשלום עמלה בחו&quot;ל.</p>
+</div></details>
+  <div class="section-label">נדרש 6 · 2% · תהליך הביקורת</div>
+  <div class="req"><h4>הנדרש</h4><p>במידה וקיימים ליקויי בקרה מהותיים במערכת לניהול קשרי הלקוחות, איך תשפיע עובדה זו על דוח רואה החשבון המבקר על רכיבי הבקרה הפנימית על הדיווח הכספי, אם מערכת זו אינה משפיעה על הנתונים והמידע בדוח הכספי?</p>
+</div>
+  <textarea class="ans" placeholder="נסו לענות לבד לפני שאתם חושפים את הפתרון…"></textarea>
+  <button class="reveal" onclick="this.nextElementSibling.hidden=false;this.remove()">הצגת הפתרון הרשמי</button>
+  <div class="sol" hidden><h4>✓ פתרון רשמי</h4><p>במידה וקיימים ליקויי בקרה מהותיים במערכת מידע שאינם משפיעים על הדיווח הכספי, לא יתייחס רואה החשבון לליקויים אלה בדוח שלו על אפקטיביות רכיבי הבקרה הפנימית, מאחר ועל רואה החשבון להתייחס בדוח שלו רק ל&quot;חולשה מהותית&quot; המוגדרת כ&quot;ליקוי, או צירוף של ליקויים, בבקרה פנימית על דיווח כספי, עד כדי כך שקיימת אפשרות סבירה כי הצגה מוטעית מהותית בדוחות כספיים שנתיים או רבעוניים של החברה לא תימנע או תתגלה במועד.&quot;</p>
+<p>יצוין, כי במקרים מסוימים למערכת ניהול קשרי הלקוחות עשויה להיות השפעה על דוחות כספיים. במקרים אלה רואה החשבון יתייחס לליקויי הבקרה בהתאם.</p>
+<div class="kp"><b>נקודות מפתח לבדיקה עצמית:</b><ul><li>ליקויים במערכת שאינה משפיעה על הדיווח הכספי לא ייכללו בדוח על רכיבי הבקרה הפנימית</li><li>הדוח מתייחס רק ל'חולשה מהותית' בבקרה פנימית על דיווח כספי</li><li>הגדרה: אפשרות סבירה שהצגה מוטעית מהותית בדוחות שנתיים/רבעוניים לא תימנע או תתגלה במועד</li><li>אם ל-CRM יש בכל זאת השפעה על הדוחות – יש להתייחס לליקויים בהתאם</li></ul></div></div>
+  <div class="art-foot"><div class="art-actions"><a class="practice-link" href="https://eyalgoldman1313-creator.github.io/tech_audit_practice.github.io/#/case/council-2021-winter-q7" target="_blank" rel="noopener">🗂️ לסימולציה באתר התרגול</a></div></div>
+</article>
+<article class="standard" id="council-2025-winter-q4">
+  <div class="standard-header"><span class="standard-code">חורף 2025 · ש׳ 4</span><h3>צ'ארלי וחצי בע"מ – הרשאות בלתי מוגבלות לפקודות יומן ידניות ב-ERP</h3></div>
+  <div class="purpose"><strong>סעיף:</strong> נדרש 4 · <strong>משקל:</strong> 4%<br><span class="srcs">בחינת מועצה חורף (סתיו) 2025, שאלה 4 (נדרש 4 בלבד)</span></div>
+  <details class="bg"><summary>📄 נתוני השאלה (לחצו לפתיחה)</summary><div class="summary"><p>מונית לאחרונה לשמש כרואה החשבון המבקר של חברת צ&#39;ארלי וחצי בע&quot;מ, שהינה חברה פרטית העוסקת בפיתוח וייצור ציוד רפואי מתקדם (להלן – &quot;החברה&quot;).</p>
+<p>החברה נמצאת במשא ומתן מתקדם עם קרן השקעות זרה (להלן – &quot;המשקיע&quot;) לשם מכירת אחוז מהותי ממניותיה. במזכר העקרונות שנחתם בין הצדדים נקבע כי השלמת העסקה מותנית בכך שהחברה תציג:</p>
+<ul>
+<li>רווח נקי חיובי בדוחות הכספיים לשנת 2025 (להלן- &quot;הדוחות הכספיים&quot;).</li>
+<li>EBITDA העולה על 48 מיליון ₪ בדוחות הכספיים.</li>
+<li>הסכם לחידוש מסגרות אשראי בסך של 30 מיליון ₪ על ידי הבנקים.</li>
+</ul>
+<p>מלימוד ראשוני של החברה נודע לך כי למנכ&quot;ל וסמנכ&quot;ל הכספים של החברה קיימים מנגנוני תגמול המבוססים על ביצועים לרבות:</p>
+<ul>
+<li>זכאות ל-3 אחוז מהרווח של החברה.</li>
+<li>זכאות לאופציות במקרה של מכירת אחוז מהותי ממניות החברה למשקיע חיצוני.</li>
+</ul>
+<p><strong>כמו כן, נודע לך מצוות הביקורת שלך, שבודק את מערכות המידע של החברה, כי מערכת ה-ERP של החברה מאפשרת ביצוע פעולות יומן ידניות על ידי כל הגורמים בחברה ללא מגבלת הרשאה.</strong></p>
+<p>בפגישה שערכת עם סמנכ&quot;ל הכספים של החברה צוינו הנושאים הבאים:</p>
+<ul>
+<li>החברה תרשום בדוחות הכספיים רווח גדול מאוד בשנת 2025 לאור התקדמות משמעותית בפרויקט שנמכר ללקוח.</li>
+<li>החברה פיתחה מוצר חדש ומדהים שהינו מוכן למכירה ללקוחות ועלויות הפיתוח המשמעותיות שלו הוונו בדוחות הכספיים כנכס בלתי מוחשי.</li>
+<li>החברה מצאה פריטי מלאי משמעותיים שבעבר חשבה שנגנבו ובהתאם לכך הגדילה את יתרת המלאי שלה.</li>
+<li>כמו כן הבהיר לך סמנכ&quot;ל הכספים שהמינוי שלך כרואה החשבון נבע מכך שהמשקיע רצה שהדוחות הכספיים יבוקרו על ידי משרד בעל שם כשלך ודורש שתסיים את הביקורת תוך שבועיים (כפי שרואה החשבון המבקר הקודם היה עושה).</li>
+</ul>
+<p>[שאלה 4 עוסקת בהונאות ותרמיות (18%). נדרשים 1–3 ו-5 (מונחי תרמית, תמריצים, סיכוני תרמית ופעולות רו&quot;ח בעת זיהוי תרמית) אינם עוסקים במערכות מידע ואינם מובאים; בפתרון נדרש 3 צוין סיכון לעקיפת בקרות על ידי ההנהלה &quot;גם לאור העובדה שיש בעיית הרשאות במערכת ה-ERP&quot;.]</p>
+</div></details>
+  <div class="section-label">נדרש 4 · 4% · תהליך הביקורת</div>
+  <div class="req"><h4>הנדרש</h4><p>פרט והסבר אילו נהלי ביקורת על רואה החשבון המבקר לבצע לאור העובדה כי אין מגבלת הרשאות לרישום פעולות יומן ידניות במערכת ה-ERP של החברה.</p>
+</div>
+  <textarea class="ans" placeholder="נסו לענות לבד לפני שאתם חושפים את הפתרון…"></textarea>
+  <button class="reveal" onclick="this.nextElementSibling.hidden=false;this.remove()">הצגת הפתרון הרשמי</button>
+  <div class="sol" hidden><h4>✓ פתרון רשמי</h4><p>בהתאם לסעיף 77 לתקן ביקורת 240 רואה החשבון המבקר:</p>
+<ol>
+<li>ישיג הבנה של תהליך הדיווח הכספי בגוף המבוקר והבקרות על רישומי יומן ותיאומים אחרים.</li>
+<li>יעריך את תכנון הבקרות על רישומי היומן ותיאומים אחרים ויקבע האם יושמו.</li>
+<li>יערוך בירורים עם בעלי תפקידים הקשורים לתהליך הדיווח הכספי בנוגע לפעילות לא נאותה או בלתי רגילה המתייחסת לעיבוד רישומי יומן ותיאומים אחרים.</li>
+<li>יקבע את עיתוי הבדיקות.</li>
+<li>יזהה ויבחר את רישומי היומן ותיאומים אחרים שייבדקו על ידו.</li>
+</ol>
+<p>בהתאם לסעיף 79 לתקן ביקורת 240 ובמיוחד לאור העובדה כי אין מגבלת הרשאות לרישום פקודות יומן ידניות על ידי משתמשים, רואה החשבון המבקר ינקוט בשיקול דעת מקצועי לצורך קביעת האופי, העיתוי וההיקף של הבדיקות של רישומי יומן ותיאומים אחרים. היות שרישומי יומן ותיאומים אחרים שיש בהם מירמה מבוצעים לעתים קרובות בגמר תקופת הדיווח, יבחר המבקר בדרך כלל את רישומי היומן ותיאומים אחרים שנעשו באותו מועד. עם זאת, מאחר שהצגה מוטעית מהותית בדוחות הכספיים שמקורה בתרמית יכולה להתרחש במהלך התקופה ועשויה להיות כרוכה במאמצים נרחבים להסתיר את ביצוע התרמית, ישקול רואה החשבון המבקר אם קיים גם צורך לבדוק רישומי יומן ותיאומים אחרים במהלך התקופה.</p>
+<div class="kp"><b>נקודות מפתח לבדיקה עצמית:</b><ul><li>תקן ביקורת 240, סעיף 77: הבנת תהליך הדיווח הכספי והבקרות על רישומי יומן ותיאומים</li><li>הערכת תכנון הבקרות על רישומי היומן וקביעה אם יושמו</li><li>בירורים עם בעלי תפקידים לגבי פעילות לא נאותה/בלתי רגילה בעיבוד רישומי יומן</li><li>קביעת עיתוי הבדיקות וזיהוי ובחירת רישומי היומן לבדיקה</li><li>סעיף 79: בהיעדר מגבלת הרשאות – שיקול דעת בקביעת האופי, העיתוי וההיקף של בדיקות רישומי היומן</li><li>התמקדות ברישומים בגמר התקופה, ושקילת בדיקת רישומים גם במהלך התקופה</li></ul></div></div>
+  <div class="art-foot"><div class="art-actions"><a class="practice-link" href="https://eyalgoldman1313-creator.github.io/tech_audit_practice.github.io/#/case/council-2025-winter-q4" target="_blank" rel="noopener">🗂️ לסימולציה באתר התרגול</a></div></div>
+</article></section>
+<footer class="foot"><span class="mark">ביקורת מערכות מידע ממוחשבות בשילוב AI</span>מקור: בחינות מועצת רואי החשבון 2015–2025 והפתרונות הרשמיים.<br><a href="https://eyalgoldman1313-creator.github.io/tech_audit_guide.github.io/">מדריך</a> · <a href="https://eyalgoldman1313-creator.github.io/tech_audit_practice.github.io/">תרגול</a></footer>
+<button class="b2t" id="b2t" aria-label="חזרה למעלה">↑</button>
+<script>
+var h=document.getElementById('hamburger'),n=document.getElementById('navLinks');h.onclick=function(){n.classList.toggle('open')};
+document.querySelectorAll('.nav-item>a').forEach(function(a){a.addEventListener('click',function(e){var d=a.nextElementSibling;if(d&&matchMedia('(max-width:1180px)').matches){e.preventDefault();a.parentNode.classList.toggle('open')}})});
+document.querySelectorAll('.dropdown a').forEach(function(a){a.onclick=function(){n.classList.remove('open')}});
+var b=document.getElementById('b2t');b.onclick=function(){scrollTo({top:0,behavior:'smooth'})};addEventListener('scroll',function(){b.classList.toggle('on',scrollY>600)},{passive:true});
+</script></body></html>
